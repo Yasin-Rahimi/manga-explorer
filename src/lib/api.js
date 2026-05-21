@@ -7,10 +7,13 @@ const api = axios.create({
 
 
 // Get top manga
-export const getTopManga = async () => {
-    const res = await api.get("/top/manga");
+export async function getTopManga(page = 1) {
+    const res = await axios.get(
+        `https://api.jikan.moe/v4/top/manga?page=${page}`
+    );
+
     return res.data;
-};
+}
 
 
 // Search manga

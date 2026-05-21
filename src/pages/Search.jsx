@@ -9,13 +9,16 @@ import Footer from "../components/Footer";
 export default function Search() {
     const [params] = useSearchParams();
     const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false)
     const query = params.get("q");
 
     useEffect(() => {
-
+        setLoading(true);
         const fetchResults = async () => {
             const data = await searchManga(query);
             setResults(data.data);
+
+            setLoading(false);
         };
     
         fetchResults();
@@ -40,6 +43,13 @@ export default function Search() {
                         <MangaCard key={index} manga={manga} />
                     ))}
                 </div>
+
+                
+                {loading && (
+                    <p className="text-center text-gray-400 mb-4">
+                        Loading...
+                    </p>
+                )}
 
             </div>
 
