@@ -5,7 +5,7 @@ export default function MangaCard({ manga }) {
 
     return (
         <div
-            onClick={() => navigate(`/manga/${manga.id}`)}
+            onClick={() => navigate(`/manga/${manga.mal_id}`)}
             className="cursor-pointer bg-gray-900 rounded-xl p-4 hover:scale-105 transition-all "
         >
             {/* Manga cover */}
