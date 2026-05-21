@@ -2,23 +2,14 @@ import { useNavigate } from "react-router";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import MangaCard from "../components/MangaCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getTopManga } from "../lib/api";
 
 export default function Home() {
+
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
-
-    // Mock trending data (no API yet)
-    const trending = [
-        { id: 1, title: "Naruto", rating: 9.1 },
-        { id: 2, title: "One Piece", rating: 9.5 },
-        { id: 3, title: "Attack on Titan", rating: 9.3 },
-        { id: 4, title: "Demon Slayer", rating: 8.9 },
-        { id: 5, title: "Jujutsu Kaisen", rating: 9.0 },
-        { id: 6, title: "Death Note", rating: 9.2 },
-        { id: 7, title: "Bleach", rating: 8.7 },
-        { id: 8, title: "Chainsaw Man", rating: 8.8 }
-    ];
+    const [trending, setTrending] = useState([]);
 
     // Handle search submit
     const handleSearch = (e) => {
@@ -27,6 +18,16 @@ export default function Home() {
 
         navigate(`/search?q=${query}`);
     };
+
+    // Fetch top manga on mount
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getTopManga();
+            setTrending(data.data)
+        };
+    
+        fetchData();
+    }, []);
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
@@ -51,7 +52,7 @@ export default function Home() {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search for manga..."
-                        className="px-4 py-2 rounded-lg text-black w-80"
+                        className="px-4 py-2 rounded-lg text-black w-80 bg-amber-50"
                     />
 
                     <button className="bg-purple-600 px-4 py-2 rounded-lg">
@@ -71,8 +72,8 @@ export default function Home() {
 
                 {/* Grid */}
                 <div className="grid grid-cols-4 gap-6">
-                    {trending.map((manga) => (
-                        <MangaCard key={manga.id} manga={manga} />
+                    {trending.map((manga, index) => (
+                        <MangaCard key={index} manga={manga} />
                     ))}
                 </div>
 

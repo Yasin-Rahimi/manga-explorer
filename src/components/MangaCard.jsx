@@ -1,15 +1,18 @@
 import { useNavigate } from "react-router";
 
 export default function MangaCard({ manga }) {
-    const navigate = useNavigate();
+    const navigate = useNavigate();    
 
     return (
         <div
             onClick={() => navigate(`/manga/${manga.id}`)}
-            className="cursor-pointer bg-gray-900 rounded-xl p-4 hover:scale-105 transition-all"
+            className="cursor-pointer bg-gray-900 rounded-xl p-4 hover:scale-105 transition-all "
         >
             {/* Manga cover */}
-            <div className="h-40 bg-gray-700 rounded-lg mb-3" />
+            <div
+                className="h-40 rounded-lg mb-3 bg-cover bg-center"
+                style={{ backgroundImage: `url(${manga?.images.jpg.image_url})` }}
+            />
 
             {/* Title */}
             <h3 className="text-white font-semibold">
