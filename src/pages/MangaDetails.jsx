@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getMangaById } from "../lib/api";
+import BackButton from "../components/BackButton";
 
 export default function MangaDetails() {
     const { id } = useParams();
@@ -32,6 +33,7 @@ export default function MangaDetails() {
             {/* Header */}
             <Header />
 
+
             {/* Content */}
             <div className="px-10">
 
@@ -39,6 +41,10 @@ export default function MangaDetails() {
 
                     {/* Header section */}
                     <div className="flex gap-10 p-10 max-w-6xl mx-auto">
+
+                <div className="gap-3">
+                    <BackButton />
+                </div>
 
                         {/* Cover */}
                         <img
