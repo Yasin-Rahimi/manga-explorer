@@ -91,7 +91,7 @@ export default function Home() {
 
                 {/* Grid */}
                 <div className="grid grid-cols-4 gap-6">
-                    {trending.map((manga, index) => (
+                    {trending || [].map((manga, index) => (
                         <MangaCard key={index} manga={manga} />
                     ))}
                 </div>

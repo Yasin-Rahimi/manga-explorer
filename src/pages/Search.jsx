@@ -11,10 +11,10 @@ export default function Search() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const query = params.get("q");
+    const query = params.get("q") || '';
 
     useEffect(() => {
-        if (!query) return;
+        if (!query.trim()) return;
 
         let ignore = false;
 
@@ -73,7 +73,7 @@ export default function Search() {
                 )}
 
                 <div className="grid grid-cols-4 gap-6">
-                    {results.map((manga, index) => (
+                    {results|| [].map((manga, index) => (
                         <MangaCard key={index} manga={manga} />
                     ))}
                 </div>

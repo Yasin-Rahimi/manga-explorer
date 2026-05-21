@@ -2,8 +2,8 @@ import { useNavigate } from "react-router";
 import defaultPic from "../assets/pics/default.png";
 
 export default function MangaCard({ manga }) {
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const imageUrl = manga?.images?.jpg?.image_url ?? defaultPic;
 
     return (
@@ -66,7 +66,7 @@ export default function MangaCard({ manga }) {
 
                 {/* Title */}
                 <h3 className="text-white font-bold text-lg truncate">
-                    {manga.title}
+                    {manga.title ? manga.title : 'Unknown'}
                 </h3>
 
                 {/* Author */}
