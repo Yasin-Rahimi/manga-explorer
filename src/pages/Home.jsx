@@ -6,6 +6,9 @@ import Pagination from "../components/Pagination";
 import { useState, useEffect } from "react";
 import { getTopManga } from "../lib/api";
 import HeroBanner from "../components/HeroBanner";
+import Loading from "../components/ui/Loading";
+import Error from "../components/ui/Error";
+import Empty from "../components/ui/Empty";
 
 export default function Home() {
 
@@ -34,15 +37,11 @@ export default function Home() {
             try {
                 const res = await getTopManga(page);
     
-                setTrending(Array.isArray(res?.data) ? res.data : []);
-                setLastPage(res?.pagination?.last_visible_page ?? 1);
+                setTrending(res.data ?? []);
+                setLastPage(res.pagination?.last_visible_page ?? 1);
     
             } catch (err) {
-                if (err.message === "Network Error") {
-                    setError("No internet connection.");
-                } else {
-                    setError("Something went wrong.");
-                }
+                setError("Failed to load trending manga.");
                 setTrending([]);
             } finally {
                 setLoading(false);
@@ -52,6 +51,7 @@ export default function Home() {
         fetchData();
     }, [page]);
 
+    // Pagination
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -91,15 +91,9 @@ export default function Home() {
             <section className="px-10">
                 
                 {/* Section title */}
-                <h2 className="text-2xl font-bold mb-6">
+                {trending.lenght > 0 && <h2 className="text-2xl font-bold mb-6">
                     Top Trending Manga
-                </h2>
-
-                {loading && (
-                    <p className="text-center text-gray-400 mb-4">
-                        Loading...
-                    </p>
-                )}
+                </h2>}
 
                 {/* Grid */}
                 <div className="grid grid-cols-4 gap-6">
@@ -109,11 +103,25 @@ export default function Home() {
                 </div>
 
                 {/* Pagination */}
-                <Pagination
+                {trending.lenght > 0 && <Pagination
                     page={page}
                     setPage={setPage}
                     lastPage={lastPage}
-                />
+                />}
+
+                {/* States */}
+                {loading && <Loading text="Loading trending manga..." />}
+
+                {error && (
+                    <Error
+                        message={error}
+                        onRetry={() => setPage(1)}
+                    />
+                )}
+
+                {!loading && !error && trending.length === 0 && (
+                    <Empty message="No trending manga found." />
+                )}
 
             </section>
 
