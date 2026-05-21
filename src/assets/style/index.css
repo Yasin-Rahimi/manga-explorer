@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+/* Hero banner progress animation */
+@keyframes banner-progress {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+.animate-banner-progress {
+    animation: banner-progress 8s linear forwards;
+}
