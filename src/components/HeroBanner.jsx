@@ -3,12 +3,13 @@ import { useNavigate } from "react-router";
 import defaultPic from "../assets/pics/default.png";
 
 export default function HeroBanner({ mangas }) {
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
 
     useEffect(() => {
         if (!mangas.length) return;
+        mangas = mangas.slice(0, 5)
 
         const interval = setInterval(() => {
             setCurrent((prev) =>
@@ -70,8 +71,6 @@ export default function HeroBanner({ mangas }) {
                                 blur-xl
                                 scale-110
                                 opacity-40
-                                group-hover:scale-115
-                                transition-transform duration-700
                             "
                         />
 
@@ -103,9 +102,6 @@ export default function HeroBanner({ mangas }) {
                                     rounded-xl
                                     shadow-2xl
                                     border border-white/10
-                                    group-hover:scale-105
-                                    transition-transform duration-500
-                                    shrink-0
                                 "
                             />
 
