@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import defaultPic from '../assets/pics/default.png'
 
 export default function MangaCard({ manga }) {
     const navigate = useNavigate();    
@@ -11,7 +12,7 @@ export default function MangaCard({ manga }) {
             {/* Manga cover */}
             <div
                 className="h-40 rounded-lg mb-3 bg-cover bg-center"
-                style={{ backgroundImage: `url(${manga?.images.jpg.image_url})` }}
+                style={{ backgroundImage: `url(${manga?.images.jpg.image_url ?? defaultPic})` }}
             />
 
             {/* Title */}
