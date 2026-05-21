@@ -18,6 +18,7 @@ export default function Pagination({
                     disabled:cursor-not-allowed
                     hover:bg-purple-600
                     transition
+                    cursor-pointer
                 "
             >
                 Prev
@@ -40,6 +41,7 @@ export default function Pagination({
                     disabled:cursor-not-allowed
                     hover:bg-purple-600
                     transition
+                    cursor-pointer
                 "
             >
                 Next

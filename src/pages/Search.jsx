@@ -4,6 +4,7 @@
     import MangaCard from "../components/MangaCard";
     import Header from "../components/Header";
     import Footer from "../components/Footer";
+    import BackButton from '../components/BackButton';
 
 
     export default function Search() {

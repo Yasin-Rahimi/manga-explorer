@@ -42,10 +42,6 @@ export default function MangaDetails() {
                     {/* Header section */}
                     <div className="flex gap-10 p-10 max-w-6xl mx-auto">
 
-                <div className="gap-3">
-                    <BackButton />
-                </div>
-
                         {/* Cover */}
                         <img
                             src={manga.images.jpg.image_url}

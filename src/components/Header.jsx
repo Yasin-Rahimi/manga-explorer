@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router";
+import BackButton from "./BackButton";
 
 export default function Header({
     query,
@@ -7,7 +8,7 @@ export default function Header({
 }) {
     const location = useLocation();
 
-    const isHome = location.pathname === "/";
+    const isHome = location.pathname === "/"
 
     return (
         <header className="
@@ -22,7 +23,7 @@ export default function Header({
             </Link>
 
             {/* فقط در Home نمایش داده شود */}
-            {isHome && (
+            {isHome ? (
                 <form
                     onSubmit={handleSearch}
                     className="flex gap-2"
@@ -54,8 +55,11 @@ export default function Header({
                     ">
                         Search
                     </button>
-                </form>
-            )}
+                </form> 
+            )
+            : 
+            <BackButton />
+        }
         </header>
     );
 }
