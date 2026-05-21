@@ -15,6 +15,7 @@ export default function Home() {
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     // Handle search submit
     const handleSearch = (e) => {
@@ -28,13 +29,24 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
+            setError(null);
     
-            const res = await getTopManga(page);
+            try {
+                const res = await getTopManga(page);
     
-            setTrending(res.data);
-            setLastPage(res.pagination.last_visible_page);
+                setTrending(Array.isArray(res?.data) ? res.data : []);
+                setLastPage(res?.pagination?.last_visible_page ?? 1);
     
-            setLoading(false);
+            } catch (err) {
+                if (err.message === "Network Error") {
+                    setError("No internet connection.");
+                } else {
+                    setError("Something went wrong.");
+                }
+                setTrending([]);
+            } finally {
+                setLoading(false);
+            }
         };
     
         fetchData();
