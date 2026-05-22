@@ -152,22 +152,7 @@ export default function MangaDetails() {
               </div>
             )}
 
-            {}
-            {/* Synopsis Card */}
-            <div className="bg-white/3 border border-white/5 rounded-2xl p-6 backdrop-blur-md">
-              <h2 className="text-xl font-bold mb-3 text-white border-b border-purple-500/20 pb-2 flex items-center gap-2">
-                <span className="w-1.5 h-5 bg-purple-500 rounded-full inline-block"></span>
-                Synopsis
-              </h2>
-              <p className="text-gray-300 leading-relaxed text-sm sm:text-base whitespace-pre-line font-light">
-                {manga.synopsis
-                  ? manga.synopsis
-                  : "No description has been written for this manga."}
-              </p>
-            </div>
-
-            {}
-            {/* Detailed Meta Panel */}
+{/* Detailed Meta Panel */}
             <div className="bg-linear-to-br from-white/4 to-transparent border border-white/5 rounded-2xl p-6 backdrop-blur-md grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
@@ -208,6 +193,21 @@ export default function MangaDetails() {
                 </span>
               </div>
             </div>
+            
+            {/* Synopsis Card */}
+            <div className="bg-white/3 border border-white/5 rounded-2xl p-6 backdrop-blur-md">
+              <h2 className="text-xl font-bold mb-3 text-white border-b border-purple-500/20 pb-2 flex items-center gap-2">
+                <span className="w-1.5 h-5 bg-purple-500 rounded-full inline-block"></span>
+                Synopsis
+              </h2>
+              <p className="text-gray-300 leading-relaxed text-sm sm:text-base whitespace-pre-line font-light">
+                {manga.synopsis
+                  ? manga.synopsis
+                  : "No description has been written for this manga."}
+              </p>
+            </div>
+
+            
           </div>
         </div>
       </main>
