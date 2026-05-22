@@ -1,3 +1,5 @@
+// HeroSection.jsx
+
 import HeroBanner from "./HeroBanner";
 
 export default function HeroSection({ mangas }) {

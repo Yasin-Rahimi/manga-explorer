@@ -1,28 +1,39 @@
+// HeroBanner.jsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import defaultPic from "../assets/pics/default.png";
 
 export default function HeroBanner({ mangas }) {
     const navigate = useNavigate();
+
+    const visibleMangas = mangas.slice(0, 5);
+
     const [current, setCurrent] = useState(0);
 
-    useEffect(() => {
-        if (!mangas.length) return;
+    const nextSlide = () => {
+        setCurrent((prev) =>
+            prev === visibleMangas.length - 1 ? 0 : prev + 1
+        );
+    };
 
-        const visibleMangas = mangas.slice(0, 5);
+    const prevSlide = () => {
+        setCurrent((prev) =>
+            prev === 0 ? visibleMangas.length - 1 : prev - 1
+        );
+    };
+
+    useEffect(() => {
+        if (!visibleMangas.length) return;
 
         const interval = setInterval(() => {
-            setCurrent((prev) =>
-                prev === visibleMangas.length - 1
-                    ? 0
-                    : prev + 1
-            );
+            nextSlide();
         }, 8000);
 
         return () => clearInterval(interval);
-    }, [mangas]);
+    }, [visibleMangas.length]);
 
-    if (!mangas.length) return null;
+    if (!visibleMangas.length) return null;
 
     return (
         <div
@@ -56,7 +67,7 @@ export default function HeroBanner({ mangas }) {
                 }
             `}</style>
 
-            {/* Sliding container */}
+            {/* Slides */}
             <div
                 className="
                     flex
@@ -69,7 +80,7 @@ export default function HeroBanner({ mangas }) {
                     transform: `translateX(-${current * 100}%)`,
                 }}
             >
-                {mangas.map((manga) => (
+                {visibleMangas.map((manga) => (
                     <div
                         key={manga.mal_id}
                         onClick={() =>
@@ -79,7 +90,6 @@ export default function HeroBanner({ mangas }) {
                             relative
                             min-w-full
                             h-full
-                            cursor-pointer
                         "
                     >
                         {/* Background image */}
@@ -112,7 +122,7 @@ export default function HeroBanner({ mangas }) {
                             "
                         />
 
-                        {/* Mobile + Tablet overlay */}
+                        {/* Mobile overlay */}
                         <div className="absolute inset-0 bg-linear-to-t from-black via-black/65 to-transparent md:hidden z-0" />
 
                         {/* Desktop overlay */}
@@ -201,23 +211,9 @@ export default function HeroBanner({ mangas }) {
                                     lg:max-w-2xl
                                 "
                             >
+
                                 {/* Title */}
                                 <div className="space-y-0.5 sm:space-y-1 md:space-y-2">
-                                    <p
-                                        className="
-                                            text-purple-400/80
-                                            text-[10px]
-                                            sm:text-xs
-                                            md:text-sm
-                                            font-bold
-                                            tracking-[0.12em]
-                                            sm:tracking-[0.2em]
-                                            uppercase
-                                            line-clamp-1
-                                        "
-                                    >
-                                        {manga.title_japanese || "No Japanese title"}
-                                    </p>
 
                                     <h1
                                         className="
@@ -267,6 +263,7 @@ export default function HeroBanner({ mangas }) {
                                         <span className="text-gray-400">
                                             Rank
                                         </span>
+
                                         <span className="text-purple-300 font-bold">
                                             #{manga.rank || "N/A"}
                                         </span>
@@ -386,6 +383,142 @@ export default function HeroBanner({ mangas }) {
                             </div>
                         </div>
                     </div>
+                ))}
+            </div>
+
+            {/* Navigation buttons */}
+            <div
+                className="
+                    absolute
+                    top-1/2
+                    left-0
+                    w-full
+                    -translate-y-1/2
+                    z-30
+                    flex
+                    items-center
+                    justify-between
+                    px-3
+                    sm:px-5
+                    pointer-events-none
+                "
+            >
+                {/* Prev */}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        prevSlide();
+                    }}
+                    className="
+                        pointer-events-auto
+                        w-10
+                        h-10
+                        sm:w-12
+                        sm:h-12
+                        rounded-full
+                        bg-black/40
+                        hover:bg-black/60
+                        backdrop-blur-xl
+                        border
+                        border-white/10
+                        flex
+                        items-center
+                        justify-center
+                        text-white
+                        transition-all
+                        duration-300
+                        cursor-pointer
+                        hover:scale-110
+                    "
+                >
+                    <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                            d="M15 19l-7-7 7-7"
+                        />
+                    </svg>
+                </button>
+
+                {/* Next */}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        nextSlide();
+                    }}
+                    className="
+                        pointer-events-auto
+                        w-10
+                        h-10
+                        sm:w-12
+                        sm:h-12
+                        rounded-full
+                        bg-black/40
+                        hover:bg-black/60
+                        backdrop-blur-xl
+                        border
+                        border-white/10
+                        flex
+                        items-center
+                        justify-center
+                        text-white
+                        transition-all
+                        duration-300
+                        cursor-pointer
+                        hover:scale-110
+                    "
+                >
+                    <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                            d="M9 5l7 7-7 7"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            {/* Bottom indicators */}
+            <div
+                className="
+                    absolute
+                    bottom-5
+                    left-1/2
+                    -translate-x-1/2
+                    z-30
+                    flex
+                    items-center
+                    gap-2
+                "
+            >
+                {visibleMangas.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrent(index);
+                        }}
+                        className={`
+                            h-2 rounded-full transition-all duration-300
+                            ${
+                                current === index
+                                    ? "w-8 bg-purple-400"
+                                    : "w-2 bg-white/40 hover:bg-white/70"
+                            }
+                        `}
+                    />
                 ))}
             </div>
 
