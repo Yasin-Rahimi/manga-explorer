@@ -91,8 +91,8 @@ export default function Home() {
             <section className="px-10">
                 
                 {/* Section title */}
-                {trending.lenght > 0 && <h2 className="text-2xl font-bold mb-6">
-                    Top Trending Manga
+                {trending.length > 0 && <h2 className="text-2xl font-bold mb-6">
+                    Top Trending Mangas
                 </h2>}
 
                 {/* Grid */}
