@@ -16,10 +16,17 @@ export default function Home() {
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isEmpty, setIsEmpty] = useState(true)
+  const [submitClicked, setSubmitClicked] = useState(false)
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!query) return;
+    setSubmitClicked(true)
+    if (!query) {
+      setIsEmpty(true)
+      return;
+    };
+    setIsEmpty(false)
     navigate(`/search?q=${query}`);
   };
 
@@ -54,7 +61,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
 
-      <Header query={query} setQuery={setQuery} handleSearch={handleSearch} />
+      <Header query={query} setQuery={setQuery} handleSearch={handleSearch} isEmpty={isEmpty} submitClicked={submitClicked} />
 
       <HeroSection mangas={trending} />
 

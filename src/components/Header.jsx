@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router";
 import BackButton from "./BackButton";
 
-export default function Header({ query, setQuery, handleSearch }) {
+export default function Header({ query, setQuery, handleSearch, isEmpty, submitClicked }) {
+  
     const location = useLocation();
     const isHome = location.pathname === "/";
 
@@ -67,7 +68,7 @@ export default function Header({ query, setQuery, handleSearch }) {
                     </span>
                 </Link>
 
-                {/* فقط در Home نمایش داده شود */}
+                {/* Home Search */}
                 {isHome ? (
                     <form
                         onSubmit={handleSearch}
@@ -79,7 +80,6 @@ export default function Header({ query, setQuery, handleSearch }) {
                         "
                     >
                         <div className="relative group w-full">
-                            {/* Decorative Search Icon */}
                             <svg
                                 className="
                                     absolute left-3 top-1/2 -translate-y-1/2
@@ -106,7 +106,7 @@ export default function Header({ query, setQuery, handleSearch }) {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 placeholder="Search for manga..."
-                                className="
+                                className={`
                                     w-full
                                     min-w-0
                                     sm:w-70
@@ -117,15 +117,20 @@ export default function Header({ query, setQuery, handleSearch }) {
                                     text-sm sm:text-base
                                     rounded-xl
                                     bg-white/5
-                                    border border-white/10
-                                    text-white placeholder-gray-400
-                                    focus:outline-none
-                                    focus:ring-2 focus:ring-purple-500/50
-                                    focus:border-purple-500/50
-                                    focus:bg-white/10
+                                    border
                                     transition-all duration-300
                                     shadow-inner
-                                "
+                                    focus:outline-none
+                                    focus:ring-2 focus:ring-purple-500/50
+                                    focus:bg-white/10
+
+                                    ${isEmpty && submitClicked 
+                                        ? "border-red-500/70 focus:border-red-400"
+                                        : "border-white/10 focus:border-purple-500/50"
+                                    }
+
+                                    text-white placeholder-gray-400
+                                `}
                             />
                         </div>
 
