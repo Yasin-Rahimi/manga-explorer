@@ -9,6 +9,7 @@ import Error from "../components/ui/Error";
 import Empty from "../components/ui/Empty";
 
 export default function Search() {
+
   const [params] = useSearchParams();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function Search() {
         }
       } catch (err) {
         if (!ignore) {
-          setError("❌ Failed to search manga.");
+          setError("Failed to search manga.");
           setResults([]);
         }
       } finally {

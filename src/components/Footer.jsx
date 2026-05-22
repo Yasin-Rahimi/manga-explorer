@@ -29,8 +29,8 @@ export default function Footer() {
                         <ul className="space-y-3 text-gray-400 font-medium">
                             {[
                                 {name: 'Home', to: '/'},
-                                {name: 'Trending', to: '/'},
-                                {name: 'Genres', to: '/'}
+                                {name: 'Trends', to: '/'},
+                                {name: 'Top Ranks', to: '/'}
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link to={link.to} className="hover:text-purple-400 hover:translate-x-1 inline-block transition-all duration-300 cursor-pointer">
