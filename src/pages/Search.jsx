@@ -55,7 +55,7 @@ export default function Search() {
             <Header />
 
             {/* Content */}
-            <div className="p-10 text-center">
+            <div className="p-10 text-left">
 
                 <div className="grid grid-cols-4 gap-6">
                     {results.map((manga, index) => (
