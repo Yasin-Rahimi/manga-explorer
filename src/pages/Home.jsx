@@ -12,122 +12,91 @@ import Empty from "../components/ui/Empty";
 
 export default function Home() {
 
-    const navigate = useNavigate();
-    const [query, setQuery] = useState("");
-    const [trending, setTrending] = useState([]);
-    const [page, setPage] = useState(1);
-    const [lastPage, setLastPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [trending, setTrending] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Handle search submit
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!query) return;
 
-    // Handle search submit
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (!query) return;
+    navigate(`/search?q=${query}`);
+  };
 
-        navigate(`/search?q=${query}`);
+  // Fetch top manga on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await getTopManga(page);
+
+        setTrending(res.data ?? []);
+        setLastPage(res.pagination?.last_visible_page ?? 1);
+      } catch (err) {
+        setError("Failed to load trending manga.");
+        setTrending([]);
+      } finally {
+        setLoading(false);
+
+        // Auto scroll to top after page change
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
     };
 
-    // Fetch top manga on mount
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-    
-            try {
-                const res = await getTopManga(page);
-    
-                setTrending(res.data ?? []);
-                setLastPage(res.pagination?.last_visible_page ?? 1);
-    
-            } catch (err) {
-                setError("Failed to load trending manga.");
-                setTrending([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-    
-        fetchData();
-    }, [page]);
+    fetchData();
+  }, [page]);
 
-    // Pagination
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-    
-            const res = await getTopManga(page);
-    
-            setTrending(res.data);
-            setLastPage(res.pagination.last_visible_page);
-    
-            setLoading(false);
-    
-            // Auto scroll to top after page change
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        };
-    
-        fetchData();
-    }, [page]);
+  
+  return (
+    <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
+      {/* Header */}
+      <Header query={query} setQuery={setQuery} handleSearch={handleSearch} />
 
-    return (
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
+      <section className="px-10 py-10">
+        <HeroBanner mangas={trending} />
+      </section>
 
-            {/* Header */}
-            <Header
-                query={query}
-                setQuery={setQuery}
-                handleSearch={handleSearch}
-            />
+      {/* Trending Section */}
+      <section className="px-10">
+        {/* Section title */}
+        {trending.length > 0 && (
+          <h2 className="text-2xl font-bold mb-6" id="trending">Top Trending Mangas</h2>
+        )}
 
-            <section className="px-10 py-10">
-                <HeroBanner mangas={trending} />
-            </section>
-
-            {/* Trending Section */}
-            <section className="px-10">
-                
-                {/* Section title */}
-                {trending.length > 0 && <h2 className="text-2xl font-bold mb-6">
-                    Top Trending Mangas
-                </h2>}
-
-                {/* Grid */}
-                <div className="grid grid-cols-4 gap-6">
-                    {trending.map((manga, index) => (
-                        <MangaCard key={index} manga={manga} />
-                    ))}
-                </div>
-
-                {/* Pagination */}
-                {trending.length > 0 && <Pagination
-                    page={page}
-                    setPage={setPage}
-                    lastPage={lastPage}
-                />}
-
-                {/* States */}
-                {loading && <Loading text="Loading trending manga..." />}
-
-                {error && (
-                    <Error
-                        message={error}
-                        onRetry={() => setPage(1)}
-                    />
-                )}
-
-                {!loading && !error && trending.length === 0 && (
-                    <Empty message="No trending manga found." />
-                )}
-
-            </section>
-
-            {/* Footer */}
-            <Footer />
-
+        {/* Grid */}
+        <div className="grid grid-cols-4 gap-6">
+          {trending.map((manga, index) => (
+            <MangaCard key={index} manga={manga} />
+          ))}
         </div>
-    );
+
+        {/* Pagination */}
+        {trending.length > 0 && (
+          <Pagination page={page} setPage={setPage} lastPage={lastPage} />
+        )}
+
+        {/* States */}
+        {loading && <Loading text="Loading trending manga..." />}
+
+        {error && <Error message={error} onRetry={() => setPage(1)} />}
+
+        {!loading && !error && trending.length === 0 && (
+          <Empty message="No trending manga found." />
+        )}
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 }
