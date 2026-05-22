@@ -29,8 +29,8 @@ export default function HeroBanner({ mangas }) {
             className="
                 relative
                 w-full
-                h-[450px] md:h-[500px] xl:h-[550px]
-                rounded-[2rem]
+                h-112.5 md:h-125 xl:h-137.5
+                rounded-4xl
                 overflow-hidden
                 shadow-2xl shadow-purple-900/20
                 border border-white/5
@@ -52,7 +52,7 @@ export default function HeroBanner({ mangas }) {
             <div
                 className="
                     flex h-full
-                    transition-transform duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)]
+                    transition-transform duration-800 ease-[cubic-bezier(0.25,1,0.5,1)]
                 "
                 style={{
                     transform: `translateX(-${current * 100}%)`,
@@ -92,8 +92,8 @@ export default function HeroBanner({ mangas }) {
                         />
 
                         {/* Dark overlay - Refined with rich gradients */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0c] via-[#0a0a0c]/80 to-transparent z-0" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent z-0 opacity-80" />
+                        <div className="absolute inset-0 bg-linear-to-r from-[#0a0a0c] via-[#0a0a0c]/80 to-transparent z-0" />
+                        <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0c] via-transparent to-transparent z-0 opacity-80" />
 
                         {/* Content */}
                         <div className="
@@ -107,7 +107,7 @@ export default function HeroBanner({ mangas }) {
                         ">
 
                             {/* Clear cover image */}
-                            <div className="relative flex-shrink-0 group/image hidden sm:block">
+                            <div className="relative shrink-0 group/image hidden sm:block">
                                 <div className="absolute inset-0 bg-white/20 blur-xl rounded-2xl opacity-0 group-hover/image:opacity-100 transition-opacity duration-500"></div>
                                 <img
                                     src={
@@ -149,11 +149,10 @@ export default function HeroBanner({ mangas }) {
                                     <h1 className="
                                         text-3xl md:text-5xl lg:text-6xl 
                                         font-extrabold 
-                                        text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-gray-400
+                                        text-transparent bg-clip-text bg-linear-to-br from-white via-white to-gray-400
                                         drop-shadow-sm
                                         tracking-tight
                                         line-clamp-2
-                                        z-12
                                     ">
                                         {manga.title}
                                     </h1>
@@ -271,7 +270,7 @@ export default function HeroBanner({ mangas }) {
                     key={current}
                     className="
                         h-full
-                        bg-gradient-to-r from-purple-600 to-purple-400
+                        bg-linear-to-r from-purple-600 to-purple-400
                         shadow-[0_0_10px_rgba(168,85,247,0.8)]
                         animate-banner-progress
                     "
