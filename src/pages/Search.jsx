@@ -58,7 +58,7 @@ export default function Search() {
             <div className="p-10 text-center">
 
                 <div className="grid grid-cols-4 gap-6">
-                    {results|| [].map((manga, index) => (
+                    {results.map((manga, index) => (
                         <MangaCard key={index} manga={manga} />
                     ))}
                 </div>
