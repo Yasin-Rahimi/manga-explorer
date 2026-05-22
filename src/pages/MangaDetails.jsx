@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getMangaById } from "../lib/api";
+import BackButton from "../components/BackButton"
 
 export default function MangaDetails() {
   const { id } = useParams();
@@ -152,7 +153,7 @@ export default function MangaDetails() {
               </div>
             )}
 
-{/* Detailed Meta Panel */}
+            {/* Detailed Meta Panel */}
             <div className="bg-linear-to-br from-white/4 to-transparent border border-white/5 rounded-2xl p-6 backdrop-blur-md grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
@@ -193,7 +194,7 @@ export default function MangaDetails() {
                 </span>
               </div>
             </div>
-            
+
             {/* Synopsis Card */}
             <div className="bg-white/3 border border-white/5 rounded-2xl p-6 backdrop-blur-md">
               <h2 className="text-xl font-bold mb-3 text-white border-b border-purple-500/20 pb-2 flex items-center gap-2">
@@ -206,7 +207,6 @@ export default function MangaDetails() {
                   : "No description has been written for this manga."}
               </p>
             </div>
-
             
           </div>
         </div>
