@@ -50,23 +50,47 @@ export default function MangaCard({ manga }) {
             <div className="relative z-10 p-4 flex flex-col gap-3">
 
                 {/* MAIN IMAGE (always clear) */}
-                <img
-                    src={imageUrl}
-                    alt={manga.title}
-                    className="
-                        w-full h-52
-                        object-cover
-                        rounded-lg
-                        shadow-xl
-                        border border-white/10
-                        group-hover:scale-[1.02]
-                        transition-transform duration-300
-                    "
-                />
+                <div className="relative">
+                    <img
+                        src={imageUrl}
+                        alt={manga.title}
+                        className="
+                            w-full h-52
+                            object-cover
+                            rounded-lg
+                            shadow-xl
+                            border border-white/10
+                            group-hover:scale-[1.02]
+                            transition-transform duration-300
+                        "
+                    />
+
+                    {/* Hover CTA */}
+                    <div className="
+                        absolute top-3 right-3
+                        opacity-0
+                        translate-y-1.5
+                        group-hover:opacity-100
+                        group-hover:translate-y-0
+                        transition-all duration-300
+                    ">
+                        <div className="
+                            px-3 py-1.5
+                            rounded-full
+                            bg-purple-600/90
+                            backdrop-blur-md
+                            text-white text-xs font-semibold
+                            shadow-lg
+                            border border-purple-400/30
+                        ">
+                            Read More →
+                        </div>
+                    </div>
+                </div>
 
                 {/* Title */}
                 <h3 className="text-white font-bold text-lg truncate">
-                    {manga.title ? manga.title : 'Unknown'}
+                    {manga.title ? manga.title : "Unknown"}
                 </h3>
 
                 {/* Author */}
