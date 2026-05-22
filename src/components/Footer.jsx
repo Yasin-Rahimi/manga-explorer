@@ -2,38 +2,96 @@ import { Link } from "react-router";
 
 export default function Footer() {
     return (
-        <footer className="relative border-t border-white/5 bg-black/40 backdrop-blur-xl mt-16 overflow-hidden">
+        <footer className="relative mt-12 sm:mt-16 overflow-hidden border-t border-white/5 bg-black/40 backdrop-blur-xl">
             {/* Decorative top glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-linear-to-r from-transparent via-purple-500/50 to-transparent"></div>
+            <div className="absolute top-0 left-1/2 h-px w-3/4 -translate-x-1/2 bg-linear-to-r from-transparent via-purple-500/50 to-transparent"></div>
 
-            <div className="max-w-7xl mx-auto px-6 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 py-10 sm:py-12">
+                <div
+                    className="
+                        grid grid-cols-1
+                        gap-8 sm:gap-10
+                        text-sm
+                        sm:grid-cols-2
+                        lg:grid-cols-4
+                    "
+                >
                     {/* Brand column */}
-                    <div className="space-y-4 md:col-span-2">
+                    <div className="space-y-4 sm:col-span-2">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/25">
+                            <div
+                                className="
+                                    flex h-8 w-8 shrink-0
+                                    items-center justify-center
+                                    rounded-xl
+                                    bg-linear-to-br from-purple-500 to-indigo-600
+                                    text-sm sm:text-base
+                                    font-bold text-white
+                                    shadow-lg shadow-purple-500/25
+                                "
+                            >
                                 M
                             </div>
-                            <span className="text-xl font-extrabold tracking-tight bg-linear-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+
+                            <span
+                                className="
+                                    text-lg sm:text-xl
+                                    font-extrabold tracking-tight
+                                    bg-linear-to-r from-purple-400 to-indigo-400
+                                    bg-clip-text text-transparent
+                                    leading-tight
+                                    wrap-break-word
+                                "
+                            >
                                 Manga Explorer
                             </span>
                         </div>
-                        <p className="text-gray-400 leading-relaxed max-w-md text-base">
+
+                        <p
+                            className="
+                                max-w-full sm:max-w-md
+                                text-sm sm:text-base
+                                leading-relaxed
+                                text-gray-400
+                            "
+                        >
                             Discover your next story. Immerse yourself in the world of manga with our curated collection, beautifully presented for your reading pleasure.
                         </p>
                     </div>
 
                     {/* Quick Links */}
-                    <div>
-                        <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Quick Links</h3>
+                    <div className="min-w-0">
+                        <h3
+                            className="
+                                mb-4
+                                text-[11px] sm:text-xs
+                                font-bold
+                                uppercase tracking-wider
+                                text-white
+                            "
+                        >
+                            Quick Links
+                        </h3>
+
                         <ul className="space-y-3 text-gray-400 font-medium">
                             {[
-                                {name: 'Home', to: '/'},
-                                {name: 'Trends', to: '/'},
-                                {name: 'Top Ranks', to: '/'}
+                                { name: "Home", to: "/" },
+                                { name: "Trends", to: "/" },
+                                { name: "Top Ranks", to: "/" }
                             ].map((link, index) => (
                                 <li key={index}>
-                                    <Link to={link.to} className="hover:text-purple-400 hover:translate-x-1 inline-block transition-all duration-300 cursor-pointer">
+                                    <Link
+                                        to={link.to}
+                                        className="
+                                            inline-block
+                                            text-sm sm:text-base
+                                            transition-all duration-300
+                                            hover:translate-x-1
+                                            hover:text-purple-400
+                                            cursor-pointer
+                                            wrap-break-word
+                                        "
+                                    >
                                         {link.name}
                                     </Link>
                                 </li>
@@ -42,20 +100,57 @@ export default function Footer() {
                     </div>
 
                     {/* Connect */}
-                    <div>
-                        <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-xs">Stay Connected</h3>
-                        <div className="flex gap-3 text-gray-400">
+                    <div className="min-w-0">
+                        <h3
+                            className="
+                                mb-4
+                                text-[11px] sm:text-xs
+                                font-bold
+                                uppercase tracking-wider
+                                text-white
+                            "
+                        >
+                            Stay Connected
+                        </h3>
+
+                        <div className="flex flex-wrap gap-3 text-gray-400">
                             {[
-                                { icon: '𝕏', title: 'Twitter', link: 'Twitter.com'},
-                                { icon: '🎮', title: 'Discord', link: 'Discord.com' },
-                                { icon: '💬', title: 'Reddit', link: 'Reddit.com' }
+                                {
+                                    icon: "𝕏",
+                                    title: "Twitter",
+                                    link: "https://Twitter.com"
+                                },
+                                {
+                                    icon: "🎮",
+                                    title: "Discord",
+                                    link: "https://Discord.com"
+                                },
+                                {
+                                    icon: "💬",
+                                    title: "Reddit",
+                                    link: "https://Reddit.com"
+                                }
                             ].map((social) => (
                                 <a
                                     key={social.title}
                                     href={social.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-lg cursor-pointer hover:bg-purple-500/20 hover:text-purple-400 border border-white/5 hover:border-purple-500/30 transition-all duration-300"
+                                    className="
+                                        flex
+                                        h-9 w-9 sm:h-10 sm:w-10
+                                        shrink-0
+                                        items-center justify-center
+                                        rounded-full
+                                        border border-white/5
+                                        bg-white/5
+                                        text-base sm:text-lg
+                                        cursor-pointer
+                                        transition-all duration-300
+                                        hover:border-purple-500/30
+                                        hover:bg-purple-500/20
+                                        hover:text-purple-400
+                                    "
                                     title={social.title}
                                 >
                                     {social.icon}
@@ -65,10 +160,39 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 font-medium">
-                    <p>© {new Date().getFullYear()} Manga Explorer. All rights reserved.</p>
-                    <p className="mt-4 sm:mt-0 flex items-center gap-1.5">
-                        Made with <span className="text-red-500 animate-pulse text-lg">❤️</span> for anime lovers
+                <div
+                    className="
+                        mt-10 sm:mt-12
+                        flex flex-col
+                        items-center
+                        justify-between
+                        gap-4 sm:gap-5
+                        border-t border-white/5
+                        pt-6 sm:pt-8
+                        text-center sm:text-left
+                        text-xs sm:text-sm
+                        font-medium
+                        text-gray-500
+                        md:flex-row
+                    "
+                >
+                    <p className="leading-relaxed">
+                        © {new Date().getFullYear()} Manga Explorer. All rights reserved.
+                    </p>
+
+                    <p
+                        className="
+                            flex flex-wrap
+                            items-center justify-center
+                            gap-1.5
+                            leading-relaxed
+                        "
+                    >
+                        Made with{" "}
+                        <span className="animate-pulse text-lg text-red-500">
+                            ❤️
+                        </span>{" "}
+                        for anime lovers
                     </p>
                 </div>
             </div>
