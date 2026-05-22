@@ -174,6 +174,33 @@ export default function HeroBanner({ mangas }) {
                                             </span>
                                         ))}
                                 </div>
+
+                                {/* CTA Button */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/manga/${manga.mal_id}`);
+                                    }}
+                                    className="
+                                        mt-2
+                                        w-fit
+                                        px-6 py-3
+                                        rounded-xl
+                                        bg-yellow-400
+                                        text-black
+                                        font-semibold
+                                        shadow-lg shadow-yellow-400/20
+                                        cursor-pointer
+                                        transition-all duration-300
+                                        hover:bg-yellow-300
+                                        hover:scale-105
+                                        hover:shadow-yellow-300/40
+                                        active:scale-95
+                                    "
+                                >
+                                    View Details →
+                                </button>
+
                             </div>
                         </div>
                     </div>
