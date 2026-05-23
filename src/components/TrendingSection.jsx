@@ -34,7 +34,7 @@ export default function TrendingSection({
                         wrap-break-word
                     "
                 >
-                    Top Trending Mangas
+                    Trend Mangas
                 </h2>
             )}
 

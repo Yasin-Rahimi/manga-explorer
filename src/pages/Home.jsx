@@ -66,7 +66,7 @@ export default function Home() {
       <HeroSection mangas={trending} />
 
       <TrendingSection
-        trending={trending}
+        trending={trending.slice(5)}
         page={page}
         setPage={setPage}
         lastPage={lastPage}
@@ -77,4 +77,4 @@ export default function Home() {
       <Footer />
     </div>
   );
-}
+} 
