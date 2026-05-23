@@ -47,7 +47,7 @@ export default function FilterButton({ field, onChangeSort }) {
                     transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-purple-500/50
                     cursor-pointer
-                    min-w-[120px]
+                    min-w-30
                 "
             >
                 <FaSort className="w-4 h-4 text-purple-400 shrink-0" />

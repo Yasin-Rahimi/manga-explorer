@@ -17,7 +17,7 @@ export default function SearchHeader({ query, loading, onChangeSort }) {
                 gap-2
                 text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl
                 font-bold tracking-tight
-                break-words
+                wrap-break-word
                 w-full sm:w-auto
                 leading-snug sm:leading-tight
             ">
