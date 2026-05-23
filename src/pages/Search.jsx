@@ -8,12 +8,15 @@ import Footer from "../components/Footer";
 import Loading from "../components/ui/Loading";
 import Error from "../components/ui/Error";
 import Empty from "../components/ui/Empty";
+import FilterButton from "../components/FilterButton";
 
 export default function Search() {
     const [params] = useSearchParams();
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [sort, setSort] = useState('') // rate or az
+    const [sortResult, setSortResult] = useState([]) // rate or az
 
     const query = params.get("q") || "";
 
@@ -51,6 +54,19 @@ export default function Search() {
         };
     }, [query]);
 
+    const handleChangeSort = (value) => {
+        if (value) {
+            setSort(value)
+            let filteredResult = undefined
+            if (value === 'rate') {
+                filteredResult = results.sort((m1, m2) => m2.score - m1.score)
+            } else {
+                filteredResult = results.sort((a, b) => a.title.localeCompare(b.title))
+            }
+            setSortResult(filteredResult)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-black text-white flex flex-col">
             {/* Header */}
@@ -74,7 +90,8 @@ export default function Search() {
             >
                 {/* Search title */}
                 {query && !loading && (
-                    <div className="mb-6 sm:mb-8">
+                    <div className="mb-6 sm:mb-8 flex justify-between">
+
                         <h1
                             className="
                                 text-xl
@@ -90,6 +107,11 @@ export default function Search() {
                                 "{query}"
                             </span>
                         </h1>
+
+                        {query && !loading && 
+                            <FilterButton field='sort' onChangeSort={handleChangeSort} />
+                        }
+                
                     </div>
                 )}
 
@@ -107,12 +129,21 @@ export default function Search() {
                             md:gap-6
                         "
                     >
-                        {results.map((manga, index) => (
-                            <MangaCard
-                                key={index}
-                                manga={manga}
-                            />
-                        ))}
+                        {
+                        sortResult.length === 0 
+                            ? results.map((manga, index) => (
+                                <MangaCard
+                                    key={index}
+                                    manga={manga}
+                                />
+                            ))
+                            : sortResult.map((manga, index) => (
+                                <MangaCard
+                                    key={index}
+                                    manga={manga}
+                                />
+                            ))
+                        }
                     </div>
                 )}
 

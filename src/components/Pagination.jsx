@@ -2,6 +2,7 @@ export default function Pagination({
     page,
     setPage,
     lastPage,
+    setSort
 }) {
     return (
         <div
@@ -17,7 +18,10 @@ export default function Pagination({
 
             {/* Prev Button */}
             <button
-                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                onClick={() => {
+                    setPage((p) => Math.max(p - 1, 1))
+                    setSort('')
+                }}
                 disabled={page === 1}
                 className="
                     w-full sm:w-auto
@@ -53,7 +57,10 @@ export default function Pagination({
 
             {/* Next Button */}
             <button
-                onClick={() => setPage((p) => Math.min(p + 1, lastPage))}
+                onClick={() => {
+                    setPage((p) => Math.min(p + 1, lastPage))
+                    setSort('')
+                }}
                 disabled={page === lastPage}
                 className="
                     w-full sm:w-auto

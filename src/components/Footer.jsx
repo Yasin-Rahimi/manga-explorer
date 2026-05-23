@@ -1,6 +1,21 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function Footer() {
+
+    const location = useLocation();
+    const isHome = location.pathname === "/";
+
+    const handleScroll = (id) => {
+        if (!id) return;
+    
+        const cleanId = id.startsWith('#') ? id.slice(1) : id;
+        const element = document.getElementById(cleanId);
+      
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <footer className="relative mt-12 sm:mt-16 overflow-hidden border-t border-white/5 bg-black/40 backdrop-blur-xl">
             {/* Decorative top glow */}
@@ -75,12 +90,14 @@ export default function Footer() {
 
                         <ul className="space-y-3 text-gray-400 font-medium">
                             {[
-                                { name: "Home", to: "/" },
-                                { name: "Trends", to: "/" },
-                                { name: "Top Ranks", to: "/" }
-                            ].map((link, index) => (
+                                { name: "Home", to: '/' },
+                                { name: "Trends", to: '/', id: '#trending' },
+                                { name: "Top Ranks", to: '/', id: '#heroSection' }
+                            ]
+                            .map((link, index) => (
                                 <li key={index}>
                                     <Link
+                                        onClick={() => handleScroll(link.id)}
                                         to={link.to}
                                         className="
                                             inline-block
