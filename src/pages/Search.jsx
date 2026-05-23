@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router";
+import { useMemo, useState } from "react";
+import { useLoaderData, useNavigation } from "react-router";
 import { searchManga } from "../lib/api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -11,65 +11,62 @@ import SearchResultsGrid from "../components/search/SearchResultsGrid";
 
 const ERROR_MESSAGE = "Failed to search manga.";
 
+export async function searchLoader({ request }) {
+    const url = new URL(request.url);
+    const query = url.searchParams.get("q") || "";
+
+    if (!query) {
+        return {
+            query: "",
+            results: [],
+            error: null
+        };
+    }
+
+    try {
+        const data = await searchManga(query);
+
+        return {
+            query,
+            results: data?.data ?? [],
+            error: null
+        };
+    } catch {
+        return {
+            query,
+            results: [],
+            error: ERROR_MESSAGE
+        };
+    }
+}
+
 export default function Search() {
-    const [params] = useSearchParams();
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const { query, results, error } = useLoaderData();
+    const navigation = useNavigation();
+
     const [sort, setSort] = useState("");
-    const [sortResult, setSortResult] = useState([]);
 
-    const query = params.get("q") || "";
+    const loading = navigation.state === "loading" || navigation.state === "submitting";
 
-    useEffect(() => {
-        if (!query) return;
+    const sortResult = useMemo(() => {
+        if (!sort) return [];
 
-        let ignore = false;
+        const list = [...results];
 
-        const fetchResults = async () => {
-            setLoading(true);
-            setError(null);
+        if (sort === "rate") {
+            return list.sort((m1, m2) => (m2.score ?? 0) - (m1.score ?? 0));
+        }
 
-            try {
-                const data = await searchManga(query);
-                if (!ignore) {
-                    setResults(data?.data ?? []);
-                }
-            } catch (err) {
-                if (!ignore) {
-                    setError(ERROR_MESSAGE);
-                    setResults([]);
-                }
-            } finally {
-                if (!ignore) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        fetchResults();
-
-        return () => {
-            ignore = true;
-        };
-    }, [query]);
+        return list.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
+    }, [results, sort]);
 
     const handleChangeSort = (value) => {
         if (!value) return;
-
         setSort(value);
-
-        let filteredResult;
-        if (value === "rate") {
-            filteredResult = [...results].sort((m1, m2) => m2.score - m1.score);
-        } else {
-            filteredResult = [...results].sort((a, b) => a.title.localeCompare(b.title));
-        }
-        setSortResult(filteredResult);
     };
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col">
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
             <Header />
             <main className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10">
                 <SearchHeader
@@ -79,7 +76,10 @@ export default function Search() {
                 />
 
                 {!loading && !error && results.length > 0 && (
-                    <SearchResultsGrid results={results} sortResult={sortResult} />
+                    <SearchResultsGrid
+                        results={results}
+                        sortResult={sortResult}
+                    />
                 )}
 
                 {loading && (

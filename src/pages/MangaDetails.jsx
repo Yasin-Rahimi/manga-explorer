@@ -1,8 +1,7 @@
-import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router";
+import { getMangaById } from "../lib/api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { getMangaById } from "../lib/api";
 import MangaBackground from "../components/manga/MangaBackground";
 import MangaCover from "../components/manga/MangaCover";
 import MangaTitleSection from "../components/manga/MangaTitleSection";
@@ -10,43 +9,36 @@ import MangaStatsCards from "../components/manga/MangaStatsCards";
 import MangaGenres from "../components/manga/MangaGenres";
 import MangaMetaPanel from "../components/manga/MangaMetaPanel";
 import MangaSynopsis from "../components/manga/MangaSynopsis";
-import MangaDetailsLoading from "../components/manga/MangaDetailsLoading";
 import MangaDetailsNotFound from "../components/manga/MangaDetailsNotFound";
 
-export default function MangaDetails() {
-    const { id } = useParams();
-    const [manga, setManga] = useState(null);
-    const [loading, setLoading] = useState(true);
+export async function mangaDetailsLoader({ params }) {
+    try {
+        const data = await getMangaById(params.id);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const data = await getMangaById(id);
-                setManga(data.data);
-            } catch (error) {
-                console.error("Failed to fetch manga data", error);
-            } finally {
-                setLoading(false);
-            }
+        return {
+            manga: data?.data ?? null
         };
-        fetchData();
-    }, [id]);
-
-    if (loading) {
-        return <MangaDetailsLoading />;
+    } catch {
+        return {
+            manga: null
+        };
     }
+}
+
+export default function MangaDetails() {
+    const { manga } = useLoaderData();
 
     if (!manga) {
         return <MangaDetailsNotFound />;
     }
 
-    const coverImageUrl = manga.images?.jpg?.large_image_url || manga.images?.jpg?.image_url;
+    const coverImageUrl =
+        manga.images?.jpg?.large_image_url || manga.images?.jpg?.image_url;
     const authorName = manga.authors?.[0]?.name;
     const publishedString = manga.published?.string;
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#09080e] text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
             <MangaBackground imageUrl={coverImageUrl} />
             <Header />
             <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">

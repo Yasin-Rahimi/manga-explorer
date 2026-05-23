@@ -1,11 +1,39 @@
-import { useNavigate } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
+import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TrendingManager from "../components/TrendingManager";
-import { useState } from "react";
+import { getTopManga } from "../lib/api";
+
+const ERROR_MESSAGE = "Failed to load trending manga.";
+
+export async function homeLoader({ request }) {
+    const url = new URL(request.url);
+    const page = Math.max(Number(url.searchParams.get("page") || 1), 1);
+
+    try {
+        const res = await getTopManga(page);
+
+        return {
+            trending: res.data ?? [],
+            lastPage: res.pagination?.last_visible_page ?? 1,
+            page,
+            error: null
+        };
+    } catch {
+        return {
+            trending: [],
+            lastPage: 1,
+            page,
+            error: ERROR_MESSAGE
+        };
+    }
+}
 
 export default function Home() {
+    const { trending, lastPage, page, error } = useLoaderData();
     const navigate = useNavigate();
+
     const [query, setQuery] = useState("");
     const [isEmpty, setIsEmpty] = useState(true);
     const [submitClicked, setSubmitClicked] = useState(false);
@@ -13,12 +41,14 @@ export default function Home() {
     const handleSearch = (e) => {
         e.preventDefault();
         setSubmitClicked(true);
-        if (!query) {
+
+        if (!query.trim()) {
             setIsEmpty(true);
             return;
         }
+
         setIsEmpty(false);
-        navigate(`/search?q=${query}`);
+        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     };
 
     return (
@@ -30,7 +60,12 @@ export default function Home() {
                 isEmpty={isEmpty}
                 submitClicked={submitClicked}
             />
-            <TrendingManager />
+            <TrendingManager
+                trending={trending}
+                page={page}
+                lastPage={lastPage}
+                error={error}
+            />
             <Footer />
         </div>
     );

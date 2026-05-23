@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import HeroSection from "./HeroSection";
 import TrendingSection from "./TrendingSection";
 import { getTopManga } from "../lib/api";
@@ -21,15 +21,12 @@ export default function TrendingManager() {
                 const res = await getTopManga(page);
                 setTrending(res.data ?? []);
                 setLastPage(res.pagination?.last_visible_page ?? 1);
-            } catch (err) {
+            } catch {
                 setError(ERROR_MESSAGE);
                 setTrending([]);
             } finally {
                 setLoading(false);
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth",
-                });
+                window.scrollTo({ top: 0, behavior: "smooth" });
             }
         };
 
@@ -38,7 +35,8 @@ export default function TrendingManager() {
 
     return (
         <>
-            <HeroSection mangas={trending} />
+            <HeroSection mangas={trending.slice(0, 5)} />
+
             <TrendingSection
                 trending={trending.slice(5)}
                 page={page}
