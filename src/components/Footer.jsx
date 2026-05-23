@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { FaTwitter, FaDiscord, FaReddit } from "react-icons/fa";
+import { FaTwitter, FaDiscord, FaReddit, FaBookOpen } from "react-icons/fa";
 
 export default function Footer() {
     const location = useLocation();
@@ -20,8 +20,8 @@ export default function Footer() {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 sm:gap-10">
                     <div className="space-y-4 flex-1">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-purple-500 to-indigo-600 text-sm sm:text-base font-bold text-white shadow-lg shadow-purple-500/25">
-                                M
+                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-sm sm:text-base text-white font-bold shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/40 transition-all duration-300 shrink-0">
+                                <FaBookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <span className="text-lg sm:text-xl font-extrabold tracking-tight bg-linear-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent leading-tight wrap-break-word">
                                 Manga Explorer
