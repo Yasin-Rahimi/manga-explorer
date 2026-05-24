@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
 import TrendingSection from "../components/TrendingSection";
 import { getTopManga } from "../lib/api";
@@ -9,7 +6,7 @@ import { getTopManga } from "../lib/api";
 const ERROR_MESSAGE = "Failed to load trending manga.";
 
 export default function Home() {
-    const navigate = useNavigate();
+
 
     // State for search (props to Header)
     const [query, setQuery] = useState("");
@@ -45,29 +42,11 @@ export default function Home() {
         fetchData();
     }, [page]);
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setSubmitClicked(true);
-        if (!query.trim()) {
-            setIsEmpty(true);
-            return;
-        }
-        setIsEmpty(false);
-        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-    };
-
     const heroMangas = trending.slice(0, 5);
     const trendingMangas = trending.slice(5);
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
-            <Header
-                query={query}
-                setQuery={setQuery}
-                handleSearch={handleSearch}
-                isEmpty={isEmpty}
-                submitClicked={submitClicked}
-            />
             <HeroSection mangas={heroMangas} />
             <TrendingSection
                 trending={trendingMangas}
@@ -77,7 +56,6 @@ export default function Home() {
                 loading={loading}
                 error={error}
             />
-            <Footer />
         </div>
     );
 }

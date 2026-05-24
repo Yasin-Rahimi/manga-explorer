@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router";
 import { searchManga } from "../lib/api";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Loading from "../components/ui/Loading";
 import Error from "../components/ui/Error";
 import Empty from "../components/ui/Empty";
@@ -67,7 +65,6 @@ export default function Search() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
-            <Header />
             <main className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10">
                 <SearchHeader
                     query={query}
@@ -100,7 +97,6 @@ export default function Search() {
                     </div>
                 )}
             </main>
-            <Footer />
         </div>
     );
 }

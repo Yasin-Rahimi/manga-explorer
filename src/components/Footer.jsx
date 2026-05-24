@@ -14,7 +14,7 @@ export default function Footer() {
     };
 
     return (
-        <footer className="relative mt-12 sm:mt-16 overflow-hidden border-t border-white/5 bg-black/40 backdrop-blur-xl">
+        <footer className="relative overflow-hidden border-t border-white/5 bg-black/40 backdrop-blur-xl">
             <div className="absolute top-0 left-1/2 h-px w-3/4 -translate-x-1/2 bg-linear-to-r from-transparent via-purple-500/50 to-transparent"></div>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 py-10 sm:py-12">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 sm:gap-10">
