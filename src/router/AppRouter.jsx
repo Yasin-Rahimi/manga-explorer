@@ -1,15 +1,14 @@
 import { createBrowserRouter } from "react-router";
-
 import MainLayout from "../layouts/MainLayout";
-
 import Home from "../pages/Home/Home";
-import Search, { searchLoader } from "../pages/Search/Search";
+import Search, { searchLoader, searchAction } from "../pages/Search/Search";
 import MangaDetails, { mangaDetailsLoader } from "../pages/MangaDetails/MangaDetails";
-
+import GlobalError from "./GlobalError";
 
 export const router = createBrowserRouter([
     {
         element: <MainLayout />,
+        errorElement: <GlobalError />,
         children: [
             {
                 path: "/",
@@ -19,6 +18,7 @@ export const router = createBrowserRouter([
                 path: "/search",
                 element: <Search />,
                 loader: searchLoader,
+                action: searchAction,
             },
             {
                 path: "/manga/:id",

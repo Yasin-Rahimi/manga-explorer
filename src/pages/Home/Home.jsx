@@ -7,12 +7,6 @@ const ERROR_MESSAGE = "Failed to load trending manga.";
 
 export default function Home() {
 
-
-    // State for search (props to Header)
-    const [query, setQuery] = useState("");
-    const [isEmpty, setIsEmpty] = useState(true);
-    const [submitClicked, setSubmitClicked] = useState(false);
-
     // State for trending data & pagination (client-side, no URL change)
     const [trending, setTrending] = useState([]);
     const [page, setPage] = useState(1);
@@ -25,7 +19,6 @@ export default function Home() {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
-
             try {
                 const res = await getTopManga(page);
                 setTrending(res.data ?? []);
@@ -38,7 +31,6 @@ export default function Home() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
         };
-
         fetchData();
     }, [page]);
 

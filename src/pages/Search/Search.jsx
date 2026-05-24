@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useLoaderData, useNavigation } from "react-router";
+import { useLoaderData, useNavigation, redirect } from "react-router";
 import { searchManga } from "../../lib/api";
 import Loading from "../../components/ui/Loading";
 import Error from "../../components/ui/Error";
@@ -14,47 +14,43 @@ export async function searchLoader({ request }) {
     const query = url.searchParams.get("q") || "";
 
     if (!query) {
-        return {
-            query: "",
-            results: [],
-            error: null
-        };
+        return { query: "", results: [], error: null };
     }
 
     try {
         const data = await searchManga(query);
-
-        return {
-            query,
-            results: data?.data ?? [],
-            error: null
-        };
+        return { query, results: data?.data ?? [], error: null };
     } catch {
-        return {
-            query,
-            results: [],
-            error: ERROR_MESSAGE
-        };
+        return { query, results: [], error: ERROR_MESSAGE };
     }
+}
+
+export async function searchAction({ request }) {
+    const formData = await request.formData();
+    const query = formData.get("q");
+
+    // اگر query خالی یا فقط فاصله باشد، به صفحه جستجوی خالی بروید
+    if (!query || typeof query !== "string" || query.trim() === "") {
+        return redirect("/search");
+    }
+
+    // در غیر این صورت به صفحه جستجو با پارامتر هدایت کنید
+    return redirect(`/search?q=${encodeURIComponent(query.trim())}`);
 }
 
 export default function Search() {
     const { query, results, error } = useLoaderData();
     const navigation = useNavigation();
-
     const [sort, setSort] = useState("");
 
     const loading = navigation.state === "loading" || navigation.state === "submitting";
 
     const sortResult = useMemo(() => {
         if (!sort) return [];
-
         const list = [...results];
-
         if (sort === "rate") {
             return list.sort((m1, m2) => (m2.score ?? 0) - (m1.score ?? 0));
         }
-
         return list.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
     }, [results, sort]);
 
@@ -73,10 +69,7 @@ export default function Search() {
                 />
 
                 {!loading && !error && results.length > 0 && (
-                    <SearchResultsGrid
-                        results={results}
-                        sortResult={sortResult}
-                    />
+                    <SearchResultsGrid results={results} sortResult={sortResult} />
                 )}
 
                 {loading && (
@@ -91,9 +84,15 @@ export default function Search() {
                     </div>
                 )}
 
-                {!loading && !error && results.length === 0 && (
+                {!loading && !error && results.length === 0 && query && (
                     <div className="py-16 sm:py-20">
-                        <Empty message="No manga found for this search." />
+                        <Empty message={`No manga found for "${query}".`} />
+                    </div>
+                )}
+
+                {!loading && !error && !query && (
+                    <div className="py-16 sm:py-20">
+                        <Empty message="Enter a search term to find manga." />
                     </div>
                 )}
             </main>

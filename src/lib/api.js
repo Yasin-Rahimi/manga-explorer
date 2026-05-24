@@ -10,8 +10,8 @@ export async function getTopManga(page = 1) {
     return res.data;
 }
 
-export async function searchManga(query) {
-    const res = await api.get(`/manga?q=${query}`);
+export async function searchManga(query, options = {}) {
+    const res = await api.get(`/manga?q=${query}`, { signal: options.signal });
     return res.data;
 }
 
