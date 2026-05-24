@@ -1,8 +1,9 @@
 import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home/Home";
-import Search, { searchLoader, searchAction } from "../pages/Search/Search";
-import MangaDetails, { mangaDetailsLoader } from "../pages/MangaDetails/MangaDetails";
+import Search from "../pages/Search/Search";
+import MangaDetails from "../pages/MangaDetails/MangaDetails";
+import { searchLoader, searchAction, mangaDetailsLoader } from "../loaders";
 import GlobalError from "./GlobalError";
 
 export const router = createBrowserRouter([

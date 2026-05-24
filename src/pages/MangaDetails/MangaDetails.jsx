@@ -1,5 +1,4 @@
 import { useLoaderData } from "react-router";
-import { getMangaById } from "../../lib/api";
 import MangaBackground from "./components/MangaBackground";
 import MangaCover from "./components/MangaCover";
 import MangaTitleSection from "./components/MangaTitleSection";
@@ -8,15 +7,6 @@ import MangaGenres from "./components/MangaGenres";
 import MangaMetaPanel from "./components/MangaMetaPanel";
 import MangaSynopsis from "./components/MangaSynopsis";
 import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
-
-export async function mangaDetailsLoader({ params }) {
-    try {
-        const data = await getMangaById(params.id);
-        return { manga: data?.data ?? null };
-    } catch {
-        return { manga: null };
-    }
-}
 
 export default function MangaDetails() {
     const { manga } = useLoaderData();
