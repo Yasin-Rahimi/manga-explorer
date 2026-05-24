@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router";
-import Header from "../components/common/Header";
+import Header from "../components/common/Header/Header";
 import Footer from "../components/common/Footer";
 import ScrollToTop from "../components/common/ScrollToTop";
 
