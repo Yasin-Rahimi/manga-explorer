@@ -35,7 +35,6 @@ export default function Header() {
             setSuggestions([]);
             return;
         }
-        // لغو درخواست قبلی اگر هنوز کامل نشده
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
         }
@@ -43,9 +42,8 @@ export default function Header() {
         abortControllerRef.current = controller;
 
         try {
-            // فراخوانی API جستجو (همان searchManga)
             const data = await searchManga(query, { signal: controller.signal });
-            const results = (data?.data ?? []).slice(0, 5); // حداکثر ۵ نتیجه
+            const results = (data?.data ?? []).slice(0, 4);
             setSuggestions(results);
         } catch (err) {
             if (err.name !== "AbortError") {
@@ -55,10 +53,8 @@ export default function Header() {
         }
     }, []);
 
-    // دبناز کردن fetchSuggestions (با تأخیر 300 میلی‌ثانیه)
-    const debouncedFetch = useCallback(debounce(fetchSuggestions, 300), [fetchSuggestions]);
+    const debouncedFetch = useCallback(debounce(fetchSuggestions, 200), [fetchSuggestions]);
 
-    // هر بار که inputValue تغییر می‌کند، fetch جدید را آغاز کن
     useEffect(() => {
         if (inputValue.trim()) {
             debouncedFetch(inputValue);
@@ -69,7 +65,6 @@ export default function Header() {
         }
     }, [inputValue, debouncedFetch]);
 
-    // بستن dropdown با کلیک خارج از آن
     useEffect(() => {
         function handleClickOutside(event) {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -149,7 +144,7 @@ export default function Header() {
                             />
                             {/* Dropdown پیشنهادات */}
                             {showSuggestions && suggestions.length > 0 && (
-                                <ul className="absolute left-0 right-0 top-full mt-1 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
+                                <ul className="absolute left-0 right-0 top-full mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
                                     {suggestions.map((manga) => (
                                         <li
                                             key={manga.mal_id}
