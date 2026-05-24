@@ -7,8 +7,8 @@ export default function SearchResultsGrid({ results, sortResult }) {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-            {displayList.map((manga) => (
-                <MangaCard key={manga.mal_id} manga={manga} />
+            {displayList.map((manga, index) => (
+                <MangaCard key={index} manga={manga} />
             ))}
         </div>
     );

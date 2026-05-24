@@ -22,7 +22,7 @@ export default function TrendingSection({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 w-full">
                 {trending.map((manga, index) => (
-                    <div key={manga.mal_id ?? index} className="min-w-0">
+                    <div key={index} className="min-w-0">
                         <MangaCard manga={manga} />
                     </div>
                 ))}
