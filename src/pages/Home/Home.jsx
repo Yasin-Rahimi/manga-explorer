@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import HeroSection from "./components/HeroSection";
+import HeroSection from "./components/Hero/HeroSection";
 import TrendingSection from "./components/TrendingSection";
 import { getTopManga } from "../../lib/api";
 

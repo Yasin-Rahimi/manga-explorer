@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import Header from "../components/common/Header";
 import Footer from "../components/common/Footer";
+import ScrollToTop from "../components/common/ScrollToTop";
 
 export default function MainLayout() {
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function MainLayout() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
+            <ScrollToTop />
             <Header
                 query={query}
                 setQuery={setQuery}
