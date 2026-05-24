@@ -14,14 +14,9 @@ import MangaDetailsNotFound from "../components/manga/MangaDetailsNotFound";
 export async function mangaDetailsLoader({ params }) {
     try {
         const data = await getMangaById(params.id);
-
-        return {
-            manga: data?.data ?? null
-        };
+        return { manga: data?.data ?? null };
     } catch {
-        return {
-            manga: null
-        };
+        return { manga: null };
     }
 }
 
@@ -32,8 +27,7 @@ export default function MangaDetails() {
         return <MangaDetailsNotFound />;
     }
 
-    const coverImageUrl =
-        manga.images?.jpg?.large_image_url || manga.images?.jpg?.image_url;
+    const coverImageUrl = manga.images?.jpg?.large_image_url || manga.images?.jpg?.image_url;
     const authorName = manga.authors?.[0]?.name;
     const publishedString = manga.published?.string;
 
@@ -44,22 +38,11 @@ export default function MangaDetails() {
             <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
                 <div className="mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                     <div className="lg:col-span-4 flex flex-col items-center lg:items-start">
-                        <MangaCover
-                            imageUrl={coverImageUrl}
-                            title={manga.title}
-                            status={manga.status}
-                        />
+                        <MangaCover imageUrl={coverImageUrl} title={manga.title} status={manga.status} />
                     </div>
                     <div className="lg:col-span-8 flex flex-col gap-5 sm:gap-6 min-w-0">
-                        <MangaTitleSection
-                            title={manga.title}
-                            titleJapanese={manga.title_japanese}
-                        />
-                        <MangaStatsCards
-                            score={manga.score}
-                            rank={manga.rank}
-                            popularity={manga.popularity}
-                        />
+                        <MangaTitleSection title={manga.title} titleJapanese={manga.title_japanese} />
+                        <MangaStatsCards score={manga.score} rank={manga.rank} popularity={manga.popularity} />
                         <MangaGenres genres={manga.genres} />
                         <MangaMetaPanel
                             chapters={manga.chapters}
