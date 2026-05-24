@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import defaultPic from "../assets/pics/default.png";
+import defaultPic from "../../assets/pics/default.png";
 
 export default function MangaCard({ manga }) {
   const navigate = useNavigate();

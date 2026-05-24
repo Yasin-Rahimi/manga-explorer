@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import HeroSlide from "./hero/HeroSlide";
-import HeroNavigation from "./hero/HeroNavigation";
-import HeroIndicators from "./hero/HeroIndicators";
-import HeroProgressBar from "./hero/HeroProgressBar";
+import HeroSlide from "./HeroSlide";
+import HeroNavigation from "./HeroNavigation";
+import HeroIndicators from "./HeroIndicators";
+import HeroProgressBar from "./HeroProgressBar";
 
 export default function HeroBanner({ mangas }) {
     const visibleMangas = mangas.slice(0, 5);

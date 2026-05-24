@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import defaultPic from "../../assets/pics/default.png";
+import defaultPic from "../../../assets/pics/default.png";
 import { FaStar } from "react-icons/fa";
 import { HiArrowNarrowRight } from "react-icons/hi";
 

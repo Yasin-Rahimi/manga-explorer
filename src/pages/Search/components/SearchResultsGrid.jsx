@@ -1,4 +1,4 @@
-import MangaCard from "../MangaCard";
+import MangaCard from "../../../components/common/MangaCard";
 
 export default function SearchResultsGrid({ results, sortResult }) {
     const displayList = sortResult.length === 0 ? results : sortResult;

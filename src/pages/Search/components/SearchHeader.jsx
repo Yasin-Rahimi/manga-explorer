@@ -1,4 +1,4 @@
-import FilterButton from "../FilterButton";
+import FilterButton from "../../../components/common/FilterButton";
 import { FaSearch } from "react-icons/fa";
 
 export default function SearchHeader({ query, loading, onChangeSort }) {

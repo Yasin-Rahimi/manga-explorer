@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import HeroSection from "../components/HeroSection";
-import TrendingSection from "../components/TrendingSection";
-import { getTopManga } from "../lib/api";
+import HeroSection from "./components/HeroSection";
+import TrendingSection from "./components/TrendingSection";
+import { getTopManga } from "../../lib/api";
 
 const ERROR_MESSAGE = "Failed to load trending manga.";
 

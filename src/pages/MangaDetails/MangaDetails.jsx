@@ -1,13 +1,13 @@
 import { useLoaderData } from "react-router";
-import { getMangaById } from "../lib/api";
-import MangaBackground from "../components/manga/MangaBackground";
-import MangaCover from "../components/manga/MangaCover";
-import MangaTitleSection from "../components/manga/MangaTitleSection";
-import MangaStatsCards from "../components/manga/MangaStatsCards";
-import MangaGenres from "../components/manga/MangaGenres";
-import MangaMetaPanel from "../components/manga/MangaMetaPanel";
-import MangaSynopsis from "../components/manga/MangaSynopsis";
-import MangaDetailsNotFound from "../components/manga/MangaDetailsNotFound";
+import { getMangaById } from "../../lib/api";
+import MangaBackground from "./components/MangaBackground";
+import MangaCover from "./components/MangaCover";
+import MangaTitleSection from "./components/MangaTitleSection";
+import MangaStatsCards from "./components/MangaStatsCards";
+import MangaGenres from "./components/MangaGenres";
+import MangaMetaPanel from "./components/MangaMetaPanel";
+import MangaSynopsis from "./components/MangaSynopsis";
+import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
 
 export async function mangaDetailsLoader({ params }) {
     try {

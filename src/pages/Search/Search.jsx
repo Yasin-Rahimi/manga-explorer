@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router";
-import { searchManga } from "../lib/api";
-import Loading from "../components/ui/Loading";
-import Error from "../components/ui/Error";
-import Empty from "../components/ui/Empty";
-import SearchHeader from "../components/search/SearchHeader";
-import SearchResultsGrid from "../components/search/SearchResultsGrid";
+import { searchManga } from "../../lib/api";
+import Loading from "../../components/ui/Loading";
+import Error from "../../components/ui/Error";
+import Empty from "../../components/ui/Empty";
+import SearchHeader from "./components/SearchHeader";
+import SearchResultsGrid from "./components/SearchResultsGrid";
 
 const ERROR_MESSAGE = "Failed to search manga.";
 

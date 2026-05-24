@@ -1,8 +1,8 @@
-import MangaCard from "./MangaCard";
+import MangaCard from "../../../components/common/MangaCard";
 import Pagination from "./Pagination";
-import Loading from "./ui/Loading";
-import Error from "./ui/Error";
-import Empty from "./ui/Empty";
+import Loading from "../../../components/ui/Loading";
+import Error from "../../../components/ui/Error";
+import Empty from "../../../components/ui/Empty";
 
 export default function TrendingSection({
     trending,
