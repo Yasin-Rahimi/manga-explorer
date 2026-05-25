@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import HeroSlide from "./HeroSlide";
 import HeroNavigation from "./HeroNavigation";
 import HeroIndicators from "./HeroIndicators";
@@ -7,6 +7,9 @@ import HeroProgressBar from "./HeroProgressBar";
 export default function HeroBanner({ mangas }) {
     const visibleMangas = mangas.slice(0, 5);
     const [current, setCurrent] = useState(0);
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
+    const minSwipeDistance = 50; // حداقل فاصله برای تشخیص سوایپ (پیکسل)
 
     const nextSlide = () => {
         setCurrent((prev) =>
@@ -20,20 +23,46 @@ export default function HeroBanner({ mangas }) {
         );
     };
 
+    // هندلرهای لمسی برای سوایپ
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e) => {
+        touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStartX.current || !touchEndX.current) return;
+        const distance = touchStartX.current - touchEndX.current;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            nextSlide(); // سوایپ به چپ → اسلاید بعدی
+        } else if (isRightSwipe) {
+            prevSlide(); // سوایپ به راست → اسلاید قبلی
+        }
+        // بازنشانی مقادیر
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+    };
+
     useEffect(() => {
         if (!visibleMangas.length) return;
-
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 8000);
-
+        const interval = setInterval(nextSlide, 8000);
         return () => clearInterval(interval);
     }, [visibleMangas.length]);
 
     if (!visibleMangas.length) return null;
 
     return (
-        <div className="relative w-full h-112.5 sm:h-87.5 md:h-102.5 lg:h-112.5 xl:h-122.5 2xl:h-132.5 rounded-2xl sm:rounded-3xl xl:rounded-4xl overflow-hidden shadow-2xl shadow-purple-900/20 border border-white/5 bg-[#0f0f11] group">
+        <div
+            className="relative w-full h-112.5 sm:h-87.5 md:h-102.5 lg:h-112.5 xl:h-122.5 2xl:h-132.5 rounded-2xl sm:rounded-3xl xl:rounded-4xl overflow-hidden shadow-2xl shadow-purple-900/20 border border-white/5 bg-[#0f0f11] group"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
             <style>{`
                 @keyframes banner-progress {
                     0% { width: 0%; }
