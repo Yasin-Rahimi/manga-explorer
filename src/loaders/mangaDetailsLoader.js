@@ -8,3 +8,4 @@ export async function mangaDetailsLoader({ params }) {
         return { manga: null };
     }
 }
+
