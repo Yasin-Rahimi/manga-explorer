@@ -9,7 +9,7 @@ export default function HeroSlide({ manga }) {
 
     return (
         <div onClick={handleClick} className="relative min-w-full h-full cursor-pointer">
-            <img src={manga?.images?.jpg?.large_image_url ?? defaultPic} alt={manga.title} className="absolute inset-0 w-full h-full object-cover object-center md:object-top scale-100 md:scale-125 blur-0 md:blur-3xl opacity-100 md:opacity-40 saturate-125 md:saturate-150 transition-transform duration-1000 group-hover:scale-105 md:group-hover:scale-[1.3]" />
+            <img src={manga?.images?.jpg?.large_image_url ?? defaultPic} alt={manga.title} className="absolute inset-0 w-full h-full object-cover object-center md:object-top scale-100 md:scale-125 blur-0 md:blur-3xl opacity-100 md:opacity-40 saturate-125 md:saturate-150 transition-transform duration-1000" />
             <div className="absolute inset-0 bg-linear-to-t from-black via-black/65 to-transparent md:hidden z-0" />
             <div className="hidden md:block absolute inset-0 bg-linear-to-r from-[#0a0a0c] via-[#0a0a0c]/85 to-transparent z-0" />
             <div className="hidden md:block absolute inset-0 bg-linear-to-t from-[#0a0a0c] via-transparent to-transparent z-0 opacity-80" />

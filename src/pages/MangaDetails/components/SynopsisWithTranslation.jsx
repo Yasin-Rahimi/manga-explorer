@@ -52,7 +52,7 @@ export default function SynopsisWithTranslation({ originalSynopsis }) {
 
     return (
         <div className="rounded-2xl border border-white/5 bg-white/3 p-4 sm:p-6 backdrop-blur-md">
-            <div className="flex justify-between items-start sm:items-center mb-3 flex-col sm:flex-row gap-2">
+            <div className="flex flex-row justify-between items-start sm:items-center mb-3 sm:flex-row gap-2">
                 <h2 className="flex items-center gap-2 text-lg sm:text-xl font-bold text-white">
                     <span className="inline-block w-1.5 h-5 rounded-full bg-purple-500"></span>
                     Synopsis
