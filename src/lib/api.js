@@ -19,3 +19,8 @@ export async function getMangaById(id) {
     const res = await api.get(`/manga/${id}`);
     return res.data;
 }
+
+export async function getMangaReviews(mangaId) {
+    const res = await api.get(`/manga/${mangaId}/reviews`);
+    return res.data;
+}

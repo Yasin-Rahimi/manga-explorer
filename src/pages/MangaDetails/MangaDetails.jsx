@@ -7,6 +7,8 @@ import MangaGenres from "./components/MangaGenres";
 import MangaMetaPanel from "./components/MangaMetaPanel";
 import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
 import SynopsisWithTranslation from "./components/SynopsisWithTranslation";
+import ReviewsSummarizer from "./components/ReviewsSummarizer";
+
 
 export default function MangaDetails() {
     const { manga } = useLoaderData();
@@ -50,6 +52,7 @@ export default function MangaDetails() {
                             authorName={authorName}
                         />
                         <SynopsisWithTranslation originalSynopsis={originalSynopsis} />
+                        <ReviewsSummarizer mangaId={manga.mal_id} mangaTitle={manga.title} />
                     </div>
                 </div>
             </main>

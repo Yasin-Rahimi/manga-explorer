@@ -28,7 +28,8 @@ export default function SynopsisWithTranslation({ originalSynopsis }) {
         setIsTranslating(true);
         setTranslationError(null);
         try {
-            const translated = await askClaude(originalSynopsis);
+            const prompt = "You are a professional tَranslator. Only translate the user's text to PERSIAN. Do not introduce yourself. Do not explain anything. Output only the translated text." + originalSynopsis;
+            const translated = await askClaude(prompt);
             setTranslatedSynopsis(translated);
             setShowTranslation(true);
         } catch (err) {

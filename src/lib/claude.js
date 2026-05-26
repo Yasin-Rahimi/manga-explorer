@@ -10,8 +10,7 @@ export async function askClaude(prompt) {
     const completion = await client.chat.completions.create({
         model: 'Qwen3-30B-A3B',
         messages: [
-            { role: 'system', content: "You are a professional translator. Only translate the user's text. Do not introduce yourself. Do not explain anything. Output only the translated text." },
-            { role: 'user', content: "You are a professional translator. Only translate the user's text to PERSIAN. Do not introduce yourself. Do not explain anything. Output only the translated text." + prompt },
+            { role: 'user', content: prompt },
         ],
     });
     return completion.choices[0].message.content;
