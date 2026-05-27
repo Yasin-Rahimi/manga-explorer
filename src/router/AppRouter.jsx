@@ -5,27 +5,17 @@ import Search from "../pages/Search/Search";
 import MangaDetails from "../pages/MangaDetails/MangaDetails";
 import { searchLoader, searchAction, mangaDetailsLoader } from "../loaders";
 import GlobalError from "./GlobalError";
+import ImageSearch from "../pages/ImageSearch/ImageSearch";
 
 export const router = createBrowserRouter([
     {
         element: <MainLayout />,
         errorElement: <GlobalError />,
         children: [
-            {
-                path: "/",
-                element: <Home />,
-            },
-            {
-                path: "/search",
-                element: <Search />,
-                loader: searchLoader,
-                action: searchAction,
-            },
-            {
-                path: "/manga/:id",
-                element: <MangaDetails />,
-                loader: mangaDetailsLoader,
-            },
+            { path: "/", element: <Home /> },
+            { path: "/search", element: <Search />, loader: searchLoader, action: searchAction },
+            { path: "/manga/:id", element: <MangaDetails />, loader: mangaDetailsLoader },
+            { path: "/image-search", element: <ImageSearch /> }
         ],
     },
 ]);
