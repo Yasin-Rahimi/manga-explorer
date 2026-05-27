@@ -1,14 +1,14 @@
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-    apiKey: import.meta.env.VITE_CLAUDE_API_KEY,
+    apiKey: '3f3ef086-abf6-5ab2-a010-58bcdfcd7f4c',
     dangerouslyAllowBrowser: true,
-    baseURL: import.meta.env.VITE_CLAUDE_ENDPOINT, 
+    baseURL: 'https://arvancloudai.ir/gateway/models/Qwen3-30B-A3B/vaLPAymRJJuN7KHkqOO-qQWhOZd7TXnh3azSgddjBHFj8jbN-OkMvf174yQmXwMJBueg1oBlKdbe-7UChca3BczYnxk2NZWLzTWmaBFrAObDZUftAeCckLnLWjAdx3qgFUoMpVAbaQi_VEK7IqIpgiFvaaqFbZbAVAr_dtoIkw0o0GsFZ3PlQWkTrTmDQ3A7wx1d6hZ3nQuFgz3aepE1tgNlNevJ5aQuXWGXri9XhNI8KW9oX_iZkLeGuusAyC0-/v1', 
 });
 
 export async function askClaude(prompt) {
     const completion = await client.chat.completions.create({
-        model: import.meta.env.VITE_CLAUDE_MODEL_NAME,
+        model: 'Qwen3-30B-A3B',
         messages: [
             { role: 'user', content: prompt },
         ],
