@@ -110,14 +110,14 @@ export default function ImageUploader() {
   const triggerFileInput = () => fileInputRef.current.click();
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-2 py-2 sm:px-4 sm:py-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
-      <div className="flex items-center gap-1 mb-1 sm:gap-2 sm:mb-2">
+    <div className="w-full max-w-2xl mx-auto px-3 py-5 sm:px-4 sm:py-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
+      <div className="flex items-center gap-1 mb-3 sm:mb-2">
         <FaSearch className="text-purple-400 text-base sm:text-2xl" />
         <h2 className="text-base sm:text-2xl font-bold text-white">
           Search Manga by Image
         </h2>
       </div>
-      <p className="text-gray-300 text-[11px] sm:text-sm mb-2 sm:mb-6 flex items-start gap-1">
+      <p className="text-gray-300 text-[11px] sm:text-sm mb-5 sm:mb-6 flex items-start gap-1">
         <FaInfoCircle className="text-gray-400 shrink-0 mt-0.5" />
         <span>
           Upload a manga panel or cover. AI will try to identify it and suggest
@@ -152,7 +152,7 @@ export default function ImageUploader() {
         alternativeGuesses={result.alternativeGuesses}
       />
 
-      <p className="text-[10px] sm:text-xs text-gray-500 mt-3 sm:mt-6 text-left flex items-start justify-center gap-2">
+      <p className="text-[10px] sm:text-xs text-gray-500 mt-5 sm:mt-6 text-left flex items-start justify-center gap-2">
         <FaRobot className="text-purple-400" />
         Powered by GPT-4o Vision. Results may not be 100% accurate.
       </p>
