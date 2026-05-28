@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaComment, FaThumbsUp, FaThumbsDown, FaSpinner, FaCommentDots, FaRobot } from "react-icons/fa";
 import { getMangaReviews } from "../../../lib/api";
-import { askClaude } from "../../../lib/claude";
+import { askAi  } from "../../../lib/askAi";
 
 export default function ReviewsSummarizer({ mangaId, mangaTitle }) {
     const [summary, setSummary] = useState(null);
@@ -51,7 +51,7 @@ export default function ReviewsSummarizer({ mangaId, mangaTitle }) {
                     If there are not enough points for one side, write "None". Keep each point short (one sentence max). Do not add any extra commentary.
                     `;
 
-            const aiResponse = await askClaude(prompt, { temperature: 0.3, max_tokens: 400 });
+            const aiResponse = await askAi(prompt, { temperature: 0.3, max_tokens: 400 });
             setSummary(aiResponse);
         } catch (err) {
             console.error(err);

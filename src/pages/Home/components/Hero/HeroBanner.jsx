@@ -1,10 +1,13 @@
+// src/pages/Home/components/Hero/HeroBanner.jsx
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router";
 import HeroSlide from "./HeroSlide";
 import HeroNavigation from "./HeroNavigation";
 import HeroIndicators from "./HeroIndicators";
 import HeroProgressBar from "./HeroProgressBar";
 
 export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
+    const navigate = useNavigate();
     const visibleMangas = mangas.slice(0, 5);
     const [current, setCurrent] = useState(0);
     const touchStartX = useRef(0);
@@ -49,11 +52,17 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
             } else if (e.key >= '1' && e.key <= '5') {
                 const index = parseInt(e.key) - 1;
                 if (index < visibleMangas.length) setCurrent(index);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const currentManga = visibleMangas[current];
+                if (currentManga) {
+                    navigate(`/manga/${currentManga.mal_id}`);
+                }
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [keyboardMode, visibleMangas.length, prevSlide, nextSlide]);
+    }, [keyboardMode, visibleMangas, current, navigate, prevSlide, nextSlide]);
 
     // اسلاید خودکار
     useEffect(() => {
