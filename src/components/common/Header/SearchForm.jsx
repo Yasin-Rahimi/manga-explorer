@@ -1,3 +1,4 @@
+// src/components/common/Header/SearchForm.jsx
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Form, useNavigation } from "react-router";
 import { FaSearch } from "react-icons/fa";
@@ -24,7 +25,7 @@ function useMediaQuery(query) {
     return matches;
 }
 
-export default function SearchForm() {
+export default function SearchForm({ extraButton, isMobileMenu = false, onSearchComplete }) {
     const navigation = useNavigation();
     const [isQueryEmpty, setIsQueryEmpty] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
@@ -114,6 +115,7 @@ export default function SearchForm() {
                 if (selected) {
                     setInputValue(selected.title);
                     setShowSuggestions(false);
+                    if (isMobileMenu && onSearchComplete) onSearchComplete();
                     window.location.href = `/search?q=${encodeURIComponent(selected.title)}`;
                 }
             } else if (e.key === "Escape") {
@@ -124,7 +126,7 @@ export default function SearchForm() {
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [showSuggestions, suggestions, activeIndex]);
+    }, [showSuggestions, suggestions, activeIndex, isMobileMenu, onSearchComplete]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -134,6 +136,7 @@ export default function SearchForm() {
     const handleSuggestionClick = (suggestion) => {
         setInputValue(suggestion.title);
         setShowSuggestions(false);
+        if (isMobileMenu && onSearchComplete) onSearchComplete();
         window.location.href = `/search?q=${encodeURIComponent(suggestion.title)}`;
     };
 
@@ -144,48 +147,121 @@ export default function SearchForm() {
             e.preventDefault();
             setIsQueryEmpty(true);
             setShowSuggestions(false);
+            return;
+        }
+        if (isMobileMenu && onSearchComplete) {
+            onSearchComplete();
         }
     };
 
     useEffect(() => {
         const handleSlash = (e) => {
-            if (e.key === '/' && document.activeElement !== inputRef.current) {
+            if (e.key === '/' && document.activeElement !== inputRef.current && !isMobileMenu) {
                 e.preventDefault();
                 inputRef.current?.focus();
             }
         };
         document.addEventListener('keydown', handleSlash);
         return () => document.removeEventListener('keydown', handleSlash);
-    }, []);
+    }, [isMobileMenu]);
 
+    // حالت دسکتاپ (غیر موبایل منو)
+    if (!isMobileMenu) {
+        return (
+            <Form
+                method="get"
+                action="/search"
+                className="relative flex flex-col sm:flex-row items-stretch gap-2 sm:gap-3 w-full sm:w-auto"
+                ref={wrapperRef}
+                onSubmit={handleSubmit}
+            >
+                <div className="relative group flex-1">
+                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-purple-400 transition-colors pointer-events-none" />
+                    <input
+                        ref={inputRef}
+                        name="q"
+                        type="text"
+                        autoComplete="new-password"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        onFocus={() => {
+                            if (isDesktop && inputValue.trim()) setShowSuggestions(true);
+                        }}
+                        placeholder="Search for manga..."
+                        className={`w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl bg-white/5 border transition-all duration-300 shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 text-white placeholder-gray-400 ${
+                            isQueryEmpty
+                                ? "border-red-500/70 focus:border-red-400"
+                                : "border-white/10 focus:border-purple-500/50"
+                        }`}
+                    />
+                    {isDesktop && showSuggestions && (
+                        <SuggestionsDropdown
+                            suggestions={suggestions}
+                            activeIndex={activeIndex}
+                            onSuggestionClick={handleSuggestionClick}
+                            onMouseEnter={(idx) => setActiveIndex(idx)}
+                            isLoading={isLoadingSuggestions}
+                        />
+                    )}
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="flex-1 sm:flex-none whitespace-nowrap bg-linear-to-r from-purple-600 to-indigo-600 px-3 py-1.5 sm:px-5 sm:py-2 rounded-xl text-xs sm:text-sm text-white font-medium cursor-pointer hover:from-purple-500 hover:to-indigo-500 focus:ring-2 focus:ring-purple-500/50 focus:outline-none shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? "Searching..." : "Search"}
+                    </button>
+                    {extraButton && extraButton}
+                </div>
+            </Form>
+        );
+    }
+
+    // حالت موبایل منو: اینپوت + دوربین در یک ردیف، دکمه جستجو زیر آن‌ها
     return (
         <Form
             method="get"
             action="/search"
-            className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto"
+            className="relative w-full"
             ref={wrapperRef}
             onSubmit={handleSubmit}
         >
-            <div className="relative group w-full">
-                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-400 transition-colors pointer-events-none" />
-                <input
-                    ref={inputRef}
-                    name="q"
-                    type="text"
-                    autoComplete="new-password"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onFocus={() => {
-                        if (isDesktop && inputValue.trim()) setShowSuggestions(true);
-                    }}
-                    placeholder="Search for manga..."
-                    className={`w-full min-w-0 sm:w-70 md:w-[320px] lg:w-90 pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl bg-white/5 border transition-all duration-300 shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 text-white placeholder-gray-400 ${
-                        isQueryEmpty
-                            ? "border-red-500/70 focus:border-red-400"
-                            : "border-white/10 focus:border-purple-500/50"
-                    }`}
-                />
-                {isDesktop && showSuggestions && (
+            {/* ردیف اول: اینپوت + دکمه اضافی (دوربین) */}
+            <div className="flex items-center gap-2">
+                <div className="relative group flex-1">
+                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-400 transition-colors pointer-events-none" />
+                    <input
+                        ref={inputRef}
+                        name="q"
+                        type="text"
+                        autoComplete="new-password"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        placeholder="Search for manga..."
+                        className={`w-full pl-10 pr-3 py-2.5 text-sm rounded-xl bg-white/10 border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/20 text-white placeholder-gray-400 ${
+                            isQueryEmpty
+                                ? "border-red-500/70 focus:border-red-400"
+                                : "border-white/20 focus:border-purple-500/50"
+                        }`}
+                    />
+                </div>
+                {extraButton && extraButton}
+            </div>
+
+            {/* ردیف دوم: دکمه جستجو */}
+            <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full mt-3 bg-purple-600 hover:bg-purple-700 py-2.5 rounded-xl text-white font-medium text-sm transition"
+            >
+                {isLoading ? "Searching..." : "Search"}
+            </button>
+
+            {/* نمایش پیشنهادات در موبایل (اختیاری) */}
+            {showSuggestions && suggestions.length > 0 && !isDesktop && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-50">
                     <SuggestionsDropdown
                         suggestions={suggestions}
                         activeIndex={activeIndex}
@@ -193,15 +269,8 @@ export default function SearchForm() {
                         onMouseEnter={(idx) => setActiveIndex(idx)}
                         isLoading={isLoadingSuggestions}
                     />
-                )}
-            </div>
-            <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full sm:w-auto whitespace-nowrap bg-linear-to-r from-purple-600 to-indigo-600 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base text-white font-medium cursor-pointer hover:from-purple-500 hover:to-indigo-500 focus:ring-2 focus:ring-purple-500/50 focus:outline-none shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {isLoading ? "Searching..." : "Search"}
-            </button>
+                </div>
+            )}
         </Form>
     );
 }
