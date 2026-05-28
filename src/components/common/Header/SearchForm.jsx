@@ -1,9 +1,8 @@
 // src/components/common/Header/SearchForm.jsx
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Form } from "react-router";
+import { Form, useNavigate } from "react-router";
 import { FaSearch, FaRobot, FaSpinner } from "react-icons/fa";
 import { searchManga } from "../../../lib/api";
-import { askAi } from "../../../lib/ai/askAi";
 import SuggestionsDropdown from "./SuggestionsDropdown";
 
 function debounce(func, delay) {
@@ -27,6 +26,7 @@ function useMediaQuery(query) {
 }
 
 export default function SearchForm({ cameraButton, isMobileMenu = false, onSearchComplete }) {
+    const navigate = useNavigate();
     const [isAIMode, setIsAIMode] = useState(false);
     const [isQueryEmpty, setIsQueryEmpty] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
@@ -34,7 +34,6 @@ export default function SearchForm({ cameraButton, isMobileMenu = false, onSearc
     const [inputValue, setInputValue] = useState("");
     const [activeIndex, setActiveIndex] = useState(-1);
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-    const [isAiLoading, setIsAiLoading] = useState(false);
     const abortControllerRef = useRef(null);
     const wrapperRef = useRef(null);
     const inputRef = useRef(null);
@@ -142,34 +141,21 @@ export default function SearchForm({ cameraButton, isMobileMenu = false, onSearc
         performSearch(isAIMode, suggestion.title);
     };
 
-    // فقط قسمت مربوط به پرامپت AI در تابع performSearch تغییر کرده است
-    const performSearch = async (useAI, queryText) => {
+    const performSearch = (useAI, queryText) => {
         const searchQuery = queryText || inputValue.trim();
         if (!searchQuery) {
             setIsQueryEmpty(true);
             return;
         }
         if (isMobileMenu && onSearchComplete) onSearchComplete();
-    
+
         if (useAI) {
-            setIsAiLoading(true);
-            try {
-                // پرامپت جدید: هوش مصنوعی بر اساس توصیف کاربر، نام مانگا را پیشنهاد می‌دهد
-                const prompt = `You are a manga recommendation engine. Based on the user's description, suggest the most likely manga name that matches their query. The user might describe a genre, plot, or compare to another manga. Return ONLY the manga name (title), nothing else. Do not include any explanation, punctuation, or extra text. User query: "${searchQuery}"`;
-                const aiResult = await askAi(prompt, { temperature: 0.2, max_tokens: 50 });
-                const mangaTitle = aiResult.trim();
-                window.location.href = `/search?q=${encodeURIComponent(mangaTitle)}`;
-            } catch (err) {
-                console.error("AI search failed:", err);
-                alert("AI search failed. Please try again.");
-            } finally {
-                setIsAiLoading(false);
-            }
+            navigate(`/ai-search?q=${encodeURIComponent(searchQuery)}`, { state: { fresh: true } });
         } else {
             window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
         }
     };
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!inputValue.trim()) {
@@ -187,7 +173,6 @@ export default function SearchForm({ cameraButton, isMobileMenu = false, onSearc
         }
     };
 
-    // کلید میانبر / برای فوکوس
     useEffect(() => {
         const handleSlash = (e) => {
             if (e.key === '/' && document.activeElement !== inputRef.current && !isMobileMenu) {
@@ -233,7 +218,7 @@ export default function SearchForm({ cameraButton, isMobileMenu = false, onSearc
                             }`}
                             title="AI search"
                         >
-                            {isAiLoading ? <FaSpinner className="w-4 h-4 animate-spin" /> : <FaRobot className="w-4 h-4" />}
+                            <FaRobot className="w-4 h-4" />
                         </button>
                     </div>
                     <input
