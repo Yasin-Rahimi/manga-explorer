@@ -147,6 +147,17 @@ export default function SearchForm() {
         }
     };
 
+    useEffect(() => {
+        const handleSlash = (e) => {
+            if (e.key === '/' && document.activeElement !== inputRef.current) {
+                e.preventDefault();
+                inputRef.current?.focus();
+            }
+        };
+        document.addEventListener('keydown', handleSlash);
+        return () => document.removeEventListener('keydown', handleSlash);
+    }, []);
+
     return (
         <Form
             method="get"

@@ -4,26 +4,21 @@ import HeroNavigation from "./HeroNavigation";
 import HeroIndicators from "./HeroIndicators";
 import HeroProgressBar from "./HeroProgressBar";
 
-export default function HeroBanner({ mangas }) {
+export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
     const visibleMangas = mangas.slice(0, 5);
     const [current, setCurrent] = useState(0);
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
-    const minSwipeDistance = 50; // حداقل فاصله برای تشخیص سوایپ (پیکسل)
+    const minSwipeDistance = 50;
 
     const nextSlide = () => {
-        setCurrent((prev) =>
-            prev === visibleMangas.length - 1 ? 0 : prev + 1
-        );
+        setCurrent((prev) => (prev === visibleMangas.length - 1 ? 0 : prev + 1));
     };
 
     const prevSlide = () => {
-        setCurrent((prev) =>
-            prev === 0 ? visibleMangas.length - 1 : prev - 1
-        );
+        setCurrent((prev) => (prev === 0 ? visibleMangas.length - 1 : prev - 1));
     };
 
-    // هندلرهای لمسی برای سوایپ
     const handleTouchStart = (e) => {
         touchStartX.current = e.touches[0].clientX;
     };
@@ -37,22 +32,44 @@ export default function HeroBanner({ mangas }) {
         const distance = touchStartX.current - touchEndX.current;
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
-
-        if (isLeftSwipe) {
-            nextSlide(); // سوایپ به چپ → اسلاید بعدی
-        } else if (isRightSwipe) {
-            prevSlide(); // سوایپ به راست → اسلاید قبلی
-        }
-        // بازنشانی مقادیر
+        if (isLeftSwipe) nextSlide();
+        else if (isRightSwipe) prevSlide();
         touchStartX.current = 0;
         touchEndX.current = 0;
     };
 
+    // فقط در حالت hero به کلیدها پاسخ بده
+    useEffect(() => {
+        if (keyboardMode !== 'hero') return;
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key >= '1' && e.key <= '5') {
+                const index = parseInt(e.key) - 1;
+                if (index < visibleMangas.length) setCurrent(index);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [keyboardMode, visibleMangas.length, prevSlide, nextSlide]);
+
+    // اسلاید خودکار
     useEffect(() => {
         if (!visibleMangas.length) return;
         const interval = setInterval(nextSlide, 8000);
         return () => clearInterval(interval);
-    }, [visibleMangas.length]);
+    }, [visibleMangas.length, nextSlide]);
+
+    // با کلیک روی بنر حالت را hero کن
+    useEffect(() => {
+        const handleClick = () => {
+            if (keyboardMode !== 'hero') setKeyboardMode('hero');
+        };
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
+    }, [keyboardMode, setKeyboardMode]);
 
     if (!visibleMangas.length) return null;
 

@@ -73,7 +73,7 @@ export default function ReviewsSummarizer({ mangaId, mangaTitle }) {
                 <button
                     onClick={handleSummarize}
                     disabled={loading}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-600/70 hover:bg-purple-600 rounded-lg transition disabled:opacity-50 text-white font-medium text-sm sm:w-auto w-full"
+                    className="cursor-pointer flex items-center justify-center gap-2 px-4 py-2 bg-purple-600/70 hover:bg-purple-600 rounded-lg transition disabled:opacity-50 text-white font-medium text-sm sm:w-auto w-full"
                 >
                     {loading ? (
                         <FaSpinner className="animate-spin" />

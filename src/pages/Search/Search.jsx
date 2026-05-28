@@ -37,7 +37,7 @@ export default function Search() {
                 />
 
                 {!loading && !error && results.length > 0 && (
-                    <SearchResultsGrid results={results} sortResult={sortResult} />
+                    <SearchResultsGrid results={results} sort={sort} />
                 )}
 
                 {loading && (

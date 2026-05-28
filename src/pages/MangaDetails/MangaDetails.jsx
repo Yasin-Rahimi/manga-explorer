@@ -1,4 +1,5 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
+import { useEffect } from "react";
 import MangaBackground from "./components/MangaBackground";
 import MangaCover from "./components/MangaCover";
 import MangaTitleSection from "./components/MangaTitleSection";
@@ -12,6 +13,7 @@ import ReviewsSummarizer from "./components/ReviewsSummarizer";
 
 export default function MangaDetails() {
     const { manga } = useLoaderData();
+    const navigate = useNavigate();
 
     if (!manga) {
         return <MangaDetailsNotFound />;
@@ -21,6 +23,16 @@ export default function MangaDetails() {
     const authorName = manga.authors?.[0]?.name;
     const publishedString = manga.published?.string;
     const originalSynopsis = manga.synopsis || "No description available.";
+
+    useEffect(() => {
+        const handleShortcuts = (e) => {
+            if (e.key === 'Escape') {
+                navigate(-1);
+            }
+        };
+        window.addEventListener('keydown', handleShortcuts);
+        return () => window.removeEventListener('keydown', handleShortcuts);
+    }, [navigate]);
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
