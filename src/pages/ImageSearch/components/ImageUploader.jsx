@@ -13,26 +13,34 @@ export default function ImageUploader() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [guessedName, setGuessedName] = useState('');
+    const [result, setResult] = useState({
+        primaryGuess: '',
+        alternativeGuesses: [],
+        jikan: { found: false }
+    });
     const [error, setError] = useState('');
     const fileInputRef = useRef(null);
 
-    // بازیابی نام ذخیره شده هنگام بازگشت از صفحات دیگر
+    // بازیابی نتیجه ذخیره شده هنگام بازگشت از صفحات دیگر
     useEffect(() => {
         const saved = sessionStorage.getItem(STORAGE_KEY);
         if (saved) {
-            setGuessedName(saved);
+            try {
+                setResult(JSON.parse(saved));
+            } catch (e) {
+                console.error(e);
+            }
         }
     }, []);
 
-    // ذخیره نام در sessionStorage
+    // ذخیره نتیجه در sessionStorage
     useEffect(() => {
-        if (guessedName) {
-            sessionStorage.setItem(STORAGE_KEY, guessedName);
+        if (result.primaryGuess) {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
         } else {
             sessionStorage.removeItem(STORAGE_KEY);
         }
-    }, [guessedName]);
+    }, [result]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -50,14 +58,14 @@ export default function ImageUploader() {
         setError('');
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
-        setGuessedName('');
+        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
         sessionStorage.removeItem(STORAGE_KEY);
     };
 
     const clearImage = () => {
         setSelectedFile(null);
         setPreviewUrl(null);
-        setGuessedName('');
+        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
         setError('');
         sessionStorage.removeItem(STORAGE_KEY);
         if (fileInputRef.current) fileInputRef.current.value = '';
@@ -71,7 +79,7 @@ export default function ImageUploader() {
 
         setLoading(true);
         setError('');
-        setGuessedName('');
+        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
 
         try {
             const reader = new FileReader();
@@ -79,8 +87,8 @@ export default function ImageUploader() {
             reader.onload = async () => {
                 const base64String = reader.result.split(',')[1];
                 const mimeType = selectedFile.type;
-                const { guessedName: name } = await identifyMangaFromImage(base64String, mimeType);
-                setGuessedName(name);
+                const answer = await identifyMangaFromImage(base64String, mimeType);
+                setResult(answer);
                 setLoading(false);
             };
             reader.onerror = () => {
@@ -103,7 +111,7 @@ export default function ImageUploader() {
             </div>
             <p className="text-gray-300 text-sm mb-6 flex items-center gap-1">
                 <FaInfoCircle className="text-gray-400" />
-                Upload a manga panel or cover. AI will try to identify it.
+                Upload a manga panel or cover. AI will try to identify it and suggest similar ones.
             </p>
 
             <input
@@ -128,11 +136,15 @@ export default function ImageUploader() {
             />
 
             <ErrorMessage message={error} />
-            <ResultDisplay guessedName={guessedName} />
+            <ResultDisplay
+                primaryGuess={result.primaryGuess}
+                alternativeGuesses={result.alternativeGuesses}
+                jikan={result.jikan}
+            />
 
             <p className="text-xs text-gray-500 mt-6 text-center flex items-center justify-center gap-1">
                 <FaRobot className="text-purple-400" />
-                Powered by GPT-4o Vision. Results may not be 100% accurate.
+                Powered by GPT-5.5 Vision. Results may not be 100% accurate.
             </p>
         </div>
     );

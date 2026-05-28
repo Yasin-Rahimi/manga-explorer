@@ -11,7 +11,7 @@ const client = new OpenAI({
 export async function identifyMangaFromImage(base64Image, mimeType = 'image/png') {
     const dataUrl = `data:${mimeType};base64,${base64Image}`;
 
-    // فقط حدس نام مانگا توسط هوش مصنوعی
+    // پرامپت جدید: حدس اصلی و حداکثر 3 حدس جایگزین
     const gptResponse = await client.chat.completions.create({
         model: 'GPT-5-5-yvv66',
         messages: [
@@ -20,7 +20,10 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
                 content: [
                     {
                         type: 'text',
-                        text: 'What manga is this panel from? Only answer with the manga Name',
+                        text: `Identify the manga in this image. Provide your answer in the following format:
+First line: the most likely manga name.
+If there are other possible matches, list them one per line after that, up to 3 additional names.
+Do not add any extra text, numbering, or explanation. Just the names, one per line.`,
                     },
                     {
                         type: 'image_url',
@@ -32,9 +35,30 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
         max_tokens: 150,
     });
 
-    const guessedName = gptResponse.choices[0].message.content.trim();
-    console.log("GPT guessed the manga name:", guessedName);
+    const rawResponse = gptResponse.choices[0].message.content.trim();
+    const lines = rawResponse.split('\n').filter(line => line.trim().length > 0);
+    const primaryGuess = lines[0] || "Unknown";
+    const alternativeGuesses = lines.slice(1, 4); // حداکثر 3 حدس اضافی
 
-    // فقط نام حدس زده شده را برگردان
-    return { guessedName };
+    // جستجوی حدس اصلی در Jikan API
+    let jikanResult = { found: false, id: null, url: null };
+    try {
+        const searchResult = await searchMangaByTitle(primaryGuess);
+        if (searchResult.found) {
+            jikanResult = {
+                found: true,
+                id: searchResult.id,
+                url: searchResult.url,
+                title: searchResult.title
+            };
+        }
+    } catch (err) {
+        console.error("Jikan search failed:", err);
+    }
+
+    return {
+        primaryGuess,
+        alternativeGuesses,
+        jikan: jikanResult
+    };
 }

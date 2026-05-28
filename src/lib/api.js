@@ -28,9 +28,8 @@ export async function getMangaReviews(mangaId) {
 export async function searchMangaByTitle(title) {
     try {
         const response = await api.get(`/manga?q=${encodeURIComponent(title)}&limit=1`);
-        const data = response.data;
-        if (data.data && data.data.length > 0) {
-            const manga = data.data[0];
+        if (response.data.data && response.data.data.length > 0) {
+            const manga = response.data.data[0];
             return {
                 found: true,
                 id: manga.mal_id,
@@ -41,6 +40,6 @@ export async function searchMangaByTitle(title) {
         return { found: false };
     } catch (error) {
         console.error("Jikan search error:", error);
-        return { found: false, error: error.message };
+        return { found: false };
     }
 }
