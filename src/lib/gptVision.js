@@ -1,3 +1,4 @@
+// src/lib/gptVision.js
 import OpenAI from 'openai';
 
 const client = new OpenAI({
@@ -30,20 +31,23 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
         max_tokens: 150,
     });
 
-    const mangaNameGuess = gptResponse.choices[0].message.content.trim();
-    console.log("GPT guessed the manga name:", mangaNameGuess);
+    const guessedName = gptResponse.choices[0].message.content.trim();
+    console.log("GPT guessed the manga name:", guessedName);
 
     // مرحله 2: جستجو در MangaDex برای دریافت شناسه (ID)
-    const searchUrl = `https://api.mangadex.org/manga?title=${encodeURIComponent(mangaNameGuess)}&limit=1`;
+    const searchUrl = `https://api.mangadex.org/manga?title=${encodeURIComponent(guessedName)}&limit=1`;
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
 
     if (!searchData.data || searchData.data.length === 0) {
-        throw new Error(`Could not find manga with name "${mangaNameGuess}" on MangaDex.`);
+        throw new Error(`Could not find manga with name "${guessedName}" on MangaDex.`);
     }
 
     const mangaId = searchData.data[0].id;
 
-    // مرحله 3: بازگرداندن مستقیم لینک صفحه مانگا در مانگادکس
-    return `https://mangadex.org/title/${mangaId}`;
+    // مرحله 3: بازگرداندن نام حدس زده شده و لینک صفحه مانگا در مانگادکس
+    return {
+        guessedName: guessedName,
+        url: `https://mangadex.org/title/${mangaId}`
+    };
 }
