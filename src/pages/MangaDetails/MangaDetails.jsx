@@ -12,6 +12,9 @@ import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
 import SynopsisWithTranslation from "./components/SynopsisWithTranslation";
 import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 
+/**
+ * Manga detail page – shows full information, reviews and background.
+ */
 export default function MangaDetails() {
     const { manga } = useLoaderData();
     const [reviews, setReviews] = useState([]);
@@ -23,10 +26,13 @@ export default function MangaDetails() {
         const fetchReviews = async () => {
             try {
                 const data = await getMangaReviews(manga.mal_id);
+                // getMangaReviews now returns { data: [] } on upstream failure
                 setReviews(data.data || []);
+                setReviewsError(null);
             } catch (err) {
+                // This catch only triggers on network errors etc.
                 console.error(err);
-                setReviewsError("Could not load reviews.");
+                setReviewsError("Reviews are temporarily unavailable.");
             } finally {
                 setReviewsLoading(false);
             }
@@ -60,12 +66,14 @@ export default function MangaDetails() {
                             authorName={authorName}
                         />
                         <SynopsisWithTranslation originalSynopsis={originalSynopsis} />
-                        
-                        {/* بخش ریویوها */}
-                        {!reviewsLoading && !reviewsError && (
-                            <>
-                                <ReviewsSection mangaTitle={manga.title} reviews={reviews} />
-                            </>
+
+                        {!reviewsLoading && !reviewsError && reviews.length > 0 && (
+                            <ReviewsSection mangaTitle={manga.title} reviews={reviews} />
+                        )}
+                        {!reviewsLoading && !reviewsError && reviews.length === 0 && (
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
+                                No reviews available for this manga.
+                            </div>
                         )}
                         {reviewsLoading && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
