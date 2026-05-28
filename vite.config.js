@@ -10,7 +10,7 @@ export default defineConfig({
         target: 'https://arvancloudai.ir',
         changeOrigin: true,
         rewrite: (path) => {
-          return '/gateway/models/GPT-5.5/1qt9ydB-r452Q0EB2MNsPjFWmVQsQbx5FeTACI_Ux3ODSeoV969dUtVXjO0iImecjYwdWUIFCYUWdSJ7tu-eZQpN6eWFE4gpYvfwzhpCe_xpnszip3tg5Iwkf-W5jVMmixUahYju3wmxS7-kRzPq6kUy-NJvViM2khY6urFaJbuvTMcHMMYtK6jx_3Qcx1yTXP97hMyEbqOu--B9DV_0_wI4-nwloyhqV0GJyuwspJ8H-LnN/v1/chat/completions';
+          return '/gateway/models/GPT-4o/SSLCJImpvtAXNeRe7x8F2J9Kuf5ZwAxyYOmBPDffmK4xx6cZ2bTu5unIGM-mmliSyabmlsfsgJIZ2kMuibZB_N2iqJh8WsW_mPlOlYIOPHgJBxMZ1M1NoaGTPKsrHPqu-cHuRGR8UV91Qa-b_fOKluByJTAIG6SC9rM_pOgVMHuqVSq9Wo8qYQyS-UZMJYq-kw0XZAZFCnzgKSqt9dsnZl2AEOc4RCRAyubMx6Q23EbAAw/v1/chat/completions';
         },
         headers: {
           'Authorization': 'Bearer 8d210f7c-eac0-5c67-a3f0-b61e37f62179'

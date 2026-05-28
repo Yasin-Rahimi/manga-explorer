@@ -1,19 +1,38 @@
 // src/pages/ImageSearch/components/ImageUploader.jsx
-import { useState, useRef } from 'react';
-import { FaSearch, FaInfoCircle, FaRobot  } from 'react-icons/fa';
+import { useState, useRef, useEffect } from 'react';
+import { FaSearch, FaInfoCircle, FaRobot } from 'react-icons/fa';
 import { identifyMangaFromImage } from '../../../lib/gptVision';
 import ImageDropzone from './ImageDropzone';
 import ImageUploadControls from './ImageUploadControls';
 import ErrorMessage from './ErrorMessage';
 import ResultDisplay from './ResultDisplay';
 
+const STORAGE_KEY = 'lastImageSearchResult';
+
 export default function ImageUploader() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState({ guessedName: '', url: '' });
+    const [guessedName, setGuessedName] = useState('');
     const [error, setError] = useState('');
     const fileInputRef = useRef(null);
+
+    // بازیابی نام ذخیره شده هنگام بازگشت از صفحات دیگر
+    useEffect(() => {
+        const saved = sessionStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            setGuessedName(saved);
+        }
+    }, []);
+
+    // ذخیره نام در sessionStorage
+    useEffect(() => {
+        if (guessedName) {
+            sessionStorage.setItem(STORAGE_KEY, guessedName);
+        } else {
+            sessionStorage.removeItem(STORAGE_KEY);
+        }
+    }, [guessedName]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -31,14 +50,16 @@ export default function ImageUploader() {
         setError('');
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
-        setResult({ guessedName: '', url: '' });
+        setGuessedName('');
+        sessionStorage.removeItem(STORAGE_KEY);
     };
 
     const clearImage = () => {
         setSelectedFile(null);
         setPreviewUrl(null);
-        setResult({ guessedName: '', url: '' });
+        setGuessedName('');
         setError('');
+        sessionStorage.removeItem(STORAGE_KEY);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
@@ -50,7 +71,7 @@ export default function ImageUploader() {
 
         setLoading(true);
         setError('');
-        setResult({ guessedName: '', url: '' });
+        setGuessedName('');
 
         try {
             const reader = new FileReader();
@@ -58,8 +79,8 @@ export default function ImageUploader() {
             reader.onload = async () => {
                 const base64String = reader.result.split(',')[1];
                 const mimeType = selectedFile.type;
-                const answer = await identifyMangaFromImage(base64String, mimeType);
-                setResult(answer);
+                const { guessedName: name } = await identifyMangaFromImage(base64String, mimeType);
+                setGuessedName(name);
                 setLoading(false);
             };
             reader.onerror = () => {
@@ -82,7 +103,7 @@ export default function ImageUploader() {
             </div>
             <p className="text-gray-300 text-sm mb-6 flex items-center gap-1">
                 <FaInfoCircle className="text-gray-400" />
-                Upload a manga panel or cover. AI will try to identify it and provide a buy link.
+                Upload a manga panel or cover. AI will try to identify it.
             </p>
 
             <input
@@ -107,11 +128,11 @@ export default function ImageUploader() {
             />
 
             <ErrorMessage message={error} />
-            <ResultDisplay guessedName={result.guessedName} url={result.url} />
+            <ResultDisplay guessedName={guessedName} />
 
             <p className="text-xs text-gray-500 mt-6 text-center flex items-center justify-center gap-1">
                 <FaRobot className="text-purple-400" />
-                Powered by GPT-5.5 Vision. Results may not be 100% accurate.
+                Powered by GPT-4o Vision. Results may not be 100% accurate.
             </p>
         </div>
     );

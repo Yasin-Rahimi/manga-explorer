@@ -24,3 +24,23 @@ export async function getMangaReviews(mangaId) {
     const res = await api.get(`/manga/${mangaId}/reviews`);
     return res.data;
 }
+
+export async function searchMangaByTitle(title) {
+    try {
+        const response = await api.get(`/manga?q=${encodeURIComponent(title)}&limit=1`);
+        const data = response.data;
+        if (data.data && data.data.length > 0) {
+            const manga = data.data[0];
+            return {
+                found: true,
+                id: manga.mal_id,
+                title: manga.title,
+                url: `/manga/${manga.mal_id}`
+            };
+        }
+        return { found: false };
+    } catch (error) {
+        console.error("Jikan search error:", error);
+        return { found: false, error: error.message };
+    }
+}
