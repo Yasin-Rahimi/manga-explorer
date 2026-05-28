@@ -45,6 +45,11 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
     useEffect(() => {
         if (keyboardMode !== 'hero') return;
         const handleKeyDown = (e) => {
+            // اگر کاربر داخل یک فیلد ورودی است، هیچ کاری نکن
+            if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+                return;
+            }
+
             if (e.key === 'ArrowLeft') {
                 prevSlide();
             } else if (e.key === 'ArrowRight') {
@@ -52,13 +57,8 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
             } else if (e.key >= '1' && e.key <= '5') {
                 const index = parseInt(e.key) - 1;
                 if (index < visibleMangas.length) setCurrent(index);
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                const currentManga = visibleMangas[current];
-                if (currentManga) {
-                    navigate(`/manga/${currentManga.mal_id}`);
-                }
             }
+            // کلید Enter حذف شد - دیگر هیچ عملی انجام نمی‌دهد
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);

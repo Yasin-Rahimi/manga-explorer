@@ -1,23 +1,26 @@
-// src/components/common/Header/Header.jsx
 import { useState } from "react";
-import { useLocation } from "react-router";
-import { FaSearch } from "react-icons/fa";
+import { useLocation, Link } from "react-router";
+import { FaCamera } from "react-icons/fa";
 import Logo from "./Logo";
 import MobileMenuButton from "./MobileMenuButton";
 import SidebarMenu from "./SidebarMenu";
 import BackButton from "../BackButton";
-import SearchModeSelector from "./SearchModeSelector";
 import SearchForm from "./SearchForm";
 
 export default function Header() {
     const location = useLocation();
     const isHome = location.pathname === "/";
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isTextModeActive, setIsTextModeActive] = useState(false);
 
-    const handleTextMode = () => {
-        setIsTextModeActive(true);
-    };
+    const cameraButton = (
+        <Link
+            to="/image-search"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-600/30 hover:bg-purple-600 transition-all duration-200 text-white shrink-0"
+            title="Search by image"
+        >
+            <FaCamera className="w-4 h-4 sm:w-5 sm:h-5" />
+        </Link>
+    );
 
     return (
         <>
@@ -26,22 +29,7 @@ export default function Header() {
                     <Logo />
                     <div className="hidden md:flex items-center gap-3">
                         {isHome ? (
-                            isTextModeActive ? (
-                                <SearchForm 
-                                    isTextModeActive={isTextModeActive} 
-                                    onTextMode={handleTextMode}
-                                    isMobileMenu={false}
-                                />
-                            ) : (
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-2 group cursor-default">
-                                        <span className="font-bold text-l text-transparent bg-clip-text bg-linear-to-r from-purple-300 via-pink-300 to-purple-300 tracking-wide animate-shimmer bg-size-[200%_auto]">
-                                            Looking for manga?
-                                        </span>
-                                    </div>
-                                    <SearchModeSelector onTextMode={handleTextMode} isTextModeActive={isTextModeActive} />
-                                </div>
-                            )
+                            <SearchForm cameraButton={cameraButton} isMobileMenu={false} />
                         ) : (
                             <BackButton />
                         )}
@@ -56,8 +44,6 @@ export default function Header() {
                 <SidebarMenu
                     isOpen={isSidebarOpen}
                     onClose={() => setIsSidebarOpen(false)}
-                    onTextMode={handleTextMode}
-                    isTextModeActive={isTextModeActive}
                 />
             )}
         </>

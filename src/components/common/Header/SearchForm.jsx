@@ -1,11 +1,10 @@
+// src/components/common/Header/SearchForm.jsx
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Form, useNavigation } from "react-router";
-import { FaSearch } from "react-icons/fa";
+import { Form } from "react-router";
+import { FaSearch, FaRobot, FaSpinner } from "react-icons/fa";
 import { searchManga } from "../../../lib/api";
 import { askAi } from "../../../lib/ai/askAi";
 import SuggestionsDropdown from "./SuggestionsDropdown";
-import SearchModeSelector from "./SearchModeSelector";
-import SearchTypeDropdown from "./SearchTypeDropdown";
 
 function debounce(func, delay) {
     let timeoutId;
@@ -27,24 +26,22 @@ function useMediaQuery(query) {
     return matches;
 }
 
-export default function SearchForm({ isMobileMenu = false, onSearchComplete, isTextModeActive, onTextMode }) {
-    const navigation = useNavigation();
+export default function SearchForm({ cameraButton, isMobileMenu = false, onSearchComplete }) {
+    const [isAIMode, setIsAIMode] = useState(false);
     const [isQueryEmpty, setIsQueryEmpty] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [activeIndex, setActiveIndex] = useState(-1);
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-    const [searchType, setSearchType] = useState("normal");
     const [isAiLoading, setIsAiLoading] = useState(false);
     const abortControllerRef = useRef(null);
     const wrapperRef = useRef(null);
     const inputRef = useRef(null);
-    const isLoading = navigation.state === "submitting";
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
     const fetchSuggestions = useCallback(async (query) => {
-        if (!isDesktop || searchType !== "normal") {
+        if (!isDesktop) {
             setSuggestions([]);
             return;
         }
@@ -62,8 +59,9 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
             const sorted = (data?.data ?? [])
                 .slice()
                 .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-            const results = sorted.slice(0, 4);
-            setSuggestions(results);
+            const results = sorted.slice(0, 3);
+            const customSuggestions = [{ title: query, isCustom: true }, ...results];
+            setSuggestions(customSuggestions);
             setActiveIndex(-1);
         } catch (err) {
             if (err.name !== "AbortError") {
@@ -73,12 +71,12 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
         } finally {
             setIsLoadingSuggestions(false);
         }
-    }, [isDesktop, searchType]);
+    }, [isDesktop]);
 
     const debouncedFetch = useCallback(debounce(fetchSuggestions, 200), [fetchSuggestions]);
 
     useEffect(() => {
-        if (!isDesktop || searchType !== "normal") {
+        if (!isDesktop) {
             setSuggestions([]);
             setShowSuggestions(false);
             return;
@@ -91,7 +89,7 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);
         }
-    }, [inputValue, debouncedFetch, isDesktop, searchType]);
+    }, [inputValue, debouncedFetch, isDesktop]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -120,7 +118,7 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
                     setInputValue(selected.title);
                     setShowSuggestions(false);
                     if (isMobileMenu && onSearchComplete) onSearchComplete();
-                    window.location.href = `/search?q=${encodeURIComponent(selected.title)}`;
+                    performSearch(isAIMode, selected.title);
                 }
             } else if (e.key === "Escape") {
                 setShowSuggestions(false);
@@ -130,7 +128,7 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [showSuggestions, suggestions, activeIndex, isMobileMenu, onSearchComplete]);
+    }, [showSuggestions, suggestions, activeIndex, isMobileMenu, onSearchComplete, isAIMode]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -141,74 +139,103 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
         setInputValue(suggestion.title);
         setShowSuggestions(false);
         if (isMobileMenu && onSearchComplete) onSearchComplete();
-        window.location.href = `/search?q=${encodeURIComponent(suggestion.title)}`;
+        performSearch(isAIMode, suggestion.title);
     };
 
-    const performNormalSearch = () => {
-        if (!inputValue.trim()) {
+    // فقط قسمت مربوط به پرامپت AI در تابع performSearch تغییر کرده است
+    const performSearch = async (useAI, queryText) => {
+        const searchQuery = queryText || inputValue.trim();
+        if (!searchQuery) {
             setIsQueryEmpty(true);
             return;
         }
         if (isMobileMenu && onSearchComplete) onSearchComplete();
-        window.location.href = `/search?q=${encodeURIComponent(inputValue.trim())}`;
-    };
-
-    const performAISearch = async () => {
-        if (!inputValue.trim()) {
-            setIsQueryEmpty(true);
-            return;
-        }
-        setIsAiLoading(true);
-        try {
-            const prompt = `Extract the most likely manga name from this user query. Return only the manga name, no extra text. Query: "${inputValue.trim()}"`;
-            const aiResult = await askAi(prompt, { temperature: 0.2, max_tokens: 50 });
-            const mangaTitle = aiResult.trim();
-            if (isMobileMenu && onSearchComplete) onSearchComplete();
-            window.location.href = `/search?q=${encodeURIComponent(mangaTitle)}`;
-        } catch (err) {
-            console.error("AI search failed:", err);
-            alert("AI search failed. Please try again.");
-        } finally {
-            setIsAiLoading(false);
+    
+        if (useAI) {
+            setIsAiLoading(true);
+            try {
+                // پرامپت جدید: هوش مصنوعی بر اساس توصیف کاربر، نام مانگا را پیشنهاد می‌دهد
+                const prompt = `You are a manga recommendation engine. Based on the user's description, suggest the most likely manga name that matches their query. The user might describe a genre, plot, or compare to another manga. Return ONLY the manga name (title), nothing else. Do not include any explanation, punctuation, or extra text. User query: "${searchQuery}"`;
+                const aiResult = await askAi(prompt, { temperature: 0.2, max_tokens: 50 });
+                const mangaTitle = aiResult.trim();
+                window.location.href = `/search?q=${encodeURIComponent(mangaTitle)}`;
+            } catch (err) {
+                console.error("AI search failed:", err);
+                alert("AI search failed. Please try again.");
+            } finally {
+                setIsAiLoading(false);
+            }
+        } else {
+            window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
         }
     };
-
-    const performSearch = (type) => {
-        if (type === "normal") {
-            performNormalSearch();
-        } else if (type === "ai") {
-            performAISearch();
-        }
-    };
-
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!inputValue.trim()) {
             setIsQueryEmpty(true);
             return;
         }
-        if (isMobileMenu && onSearchComplete) onSearchComplete();
-        performSearch(searchType);
+        performSearch(isAIMode, inputValue.trim());
     };
 
+    const toggleMode = (mode) => {
+        if (mode === 'ai') {
+            setIsAIMode(true);
+        } else {
+            setIsAIMode(false);
+        }
+    };
+
+    // کلید میانبر / برای فوکوس
     useEffect(() => {
         const handleSlash = (e) => {
-            if (e.key === '/' && document.activeElement !== inputRef.current && !isMobileMenu && isTextModeActive) {
+            if (e.key === '/' && document.activeElement !== inputRef.current && !isMobileMenu) {
                 e.preventDefault();
                 inputRef.current?.focus();
             }
         };
         document.addEventListener('keydown', handleSlash);
         return () => document.removeEventListener('keydown', handleSlash);
-    }, [isMobileMenu, isTextModeActive]);
-
-    if (!isTextModeActive) return null;
+    }, [isMobileMenu]);
 
     return (
-        <div className={`relative ${isMobileMenu ? 'w-full' : 'w-full sm:w-auto'}`} ref={wrapperRef}>
-            <Form method="get" action="/search" className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2" onSubmit={handleSubmit}>
+        <div className={`relative flex items-center gap-2 ${isMobileMenu ? 'w-full' : 'w-full sm:w-96 md:w-100'}`} ref={wrapperRef}>
+            <Form
+                method="get"
+                action="/search"
+                className="flex-1 relative flex items-stretch gap-2"
+                onSubmit={handleSubmit}
+            >
                 <div className="relative flex-1">
-                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-400 transition-colors pointer-events-none" />
+                    <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center z-10">
+                        <div
+                            className={`absolute left-0 top-0 h-full w-7 transition-all duration-300 ease-out bg-purple-500/30 rounded-md ${
+                                isAIMode ? 'translate-x-full' : 'translate-x-0'
+                            }`}
+                            style={{ width: '28px' }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => toggleMode('normal')}
+                            className={`cursor-pointer relative p-1 rounded-md transition-colors w-7 h-7 flex items-center justify-center ${
+                                !isAIMode ? 'text-purple-400' : 'text-gray-400 hover:text-white'
+                            }`}
+                            title="Normal search"
+                        >
+                            <FaSearch className="w-4 h-4" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => toggleMode('ai')}
+                            className={`cursor-pointer relative p-1 rounded-md transition-colors w-7 h-7 flex items-center justify-center ${
+                                isAIMode ? 'text-purple-400' : 'text-gray-400 hover:text-white'
+                            }`}
+                            title="AI search"
+                        >
+                            {isAiLoading ? <FaSpinner className="w-4 h-4 animate-spin" /> : <FaRobot className="w-4 h-4" />}
+                        </button>
+                    </div>
                     <input
                         ref={inputRef}
                         name="q"
@@ -217,38 +244,43 @@ export default function SearchForm({ isMobileMenu = false, onSearchComplete, isT
                         value={inputValue}
                         onChange={handleInputChange}
                         onFocus={() => {
-                            if (isDesktop && inputValue.trim() && searchType === "normal") setShowSuggestions(true);
+                            if (isDesktop && inputValue.trim()) setShowSuggestions(true);
                         }}
-                        placeholder="Search for manga..."
-                        className={`w-full pl-10 pr-3 py-2 text-sm rounded-xl bg-white/5 border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 text-white placeholder-gray-400 ${
-                            isQueryEmpty
-                                ? "border-red-500/70 focus:border-red-400"
-                                : "border-white/10 focus:border-purple-500/50"
-                        }`}
+                        placeholder={isAIMode ? "Ask AI to find manga..." : "Search for manga..."}
+                        className={`
+                            w-full pl-18 pr-3 py-2 text-sm rounded-xl border transition-all duration-300 focus:outline-none focus:ring-2 text-white placeholder-gray-400
+                            ${isAIMode 
+                                ? 'border-purple-400 bg-purple-900/30 focus:ring-purple-500/50 shadow-[0_0_12px_rgba(168,85,247,0.4)]' 
+                                : 'bg-white/5 border-white/10 focus:ring-purple-500/50 focus:bg-white/10'
+                            }
+                            ${isQueryEmpty ? 'border-red-500' : ''}
+                        `}
                     />
-                    {/* پیشنهادات - با عرض برابر اینپوت */}
-                    {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute left-0 right-0 top-full mt-2 z-50">
-                            <SuggestionsDropdown
-                                suggestions={suggestions}
-                                activeIndex={activeIndex}
-                                onSuggestionClick={handleSuggestionClick}
-                                onMouseEnter={(idx) => setActiveIndex(idx)}
-                                isLoading={isLoadingSuggestions}
-                            />
-                        </div>
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                    <SearchTypeDropdown
-                        selectedType={searchType}
-                        onSelectType={setSearchType}
-                        onSearch={performSearch}
-                        isLoading={isLoading || isAiLoading}
-                    />
-                    <SearchModeSelector onTextMode={onTextMode} isTextModeActive={isTextModeActive} />
                 </div>
             </Form>
+            {cameraButton}
+            {isDesktop && showSuggestions && suggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-50">
+                    <SuggestionsDropdown
+                        suggestions={suggestions}
+                        activeIndex={activeIndex}
+                        onSuggestionClick={handleSuggestionClick}
+                        onMouseEnter={(idx) => setActiveIndex(idx)}
+                        isLoading={isLoadingSuggestions}
+                    />
+                </div>
+            )}
+            {!isDesktop && showSuggestions && suggestions.length > 0 && isMobileMenu && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-50">
+                    <SuggestionsDropdown
+                        suggestions={suggestions}
+                        activeIndex={activeIndex}
+                        onSuggestionClick={handleSuggestionClick}
+                        onMouseEnter={(idx) => setActiveIndex(idx)}
+                        isLoading={isLoadingSuggestions}
+                    />
+                </div>
+            )}
         </div>
     );
 }

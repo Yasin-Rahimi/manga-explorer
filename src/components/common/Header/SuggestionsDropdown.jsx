@@ -6,7 +6,6 @@ export default function SuggestionsDropdown({
     isLoading = false
 }) {
     if (isLoading) {
-        // نمایش اسکلتون (چهار آیتم placeholder)
         return (
             <ul className="absolute left-0 right-0 top-full mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl shadow-lg z-50 overflow-y-auto">
                 {[1, 2, 3, 4].map((_, idx) => (
@@ -37,11 +36,16 @@ export default function SuggestionsDropdown({
                             : "hover:bg-purple-600/40"
                     }`}
                 >
-                    <img
-                        src={manga.images?.jpg?.small_image_url || manga.images?.jpg?.image_url}
-                        alt=""
-                        className="w-8 h-8 object-cover rounded"
-                    />
+                    {/* فقط اگر آیتم سفارشی (isCustom) نبود، تصویر نشان بده */}
+                    {!manga.isCustom && (
+                        <img
+                            src={manga.images?.jpg?.small_image_url || manga.images?.jpg?.image_url}
+                            alt=""
+                            className="w-8 h-8 object-cover rounded"
+                        />
+                    )}
+                    {/* اگر آیتم سفارشی بود، یک placeholder خالی برای حفظ تراز قرار می‌دهیم */}
+                    {manga.isCustom && <div className="w-8 h-8"></div>}
                     <span>{manga.title}</span>
                 </li>
             ))}
