@@ -1,6 +1,6 @@
 // src/pages/AISearch/AISearch.jsx
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation, Link, useNavigate } from "react-router";
+import { useSearchParams, useLocation, useNavigate } from "react-router";
 import { FaSearch, FaRobot } from "react-icons/fa";
 import { askAi } from "../../lib/ai/askAi";
 import { searchManga } from "../../lib/api";
