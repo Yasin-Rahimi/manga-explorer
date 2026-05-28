@@ -144,7 +144,7 @@ export default function ImageUploader() {
 
             <p className="text-xs text-gray-500 mt-6 text-center flex items-center justify-center gap-1">
                 <FaRobot className="text-purple-400" />
-                Powered by GPT-5.5 Vision. Results may not be 100% accurate.
+                Powered by GPT-4o Vision. Results may not be 100% accurate.
             </p>
         </div>
     );

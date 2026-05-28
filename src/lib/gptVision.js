@@ -11,9 +11,8 @@ const client = new OpenAI({
 export async function identifyMangaFromImage(base64Image, mimeType = 'image/png') {
     const dataUrl = `data:${mimeType};base64,${base64Image}`;
 
-    // پرامپت جدید: حدس اصلی و حداکثر 3 حدس جایگزین
     const gptResponse = await client.chat.completions.create({
-        model: 'GPT-5-5-yvv66',
+        model: 'GPT-4o-h6kg5',
         messages: [
             {
                 role: 'user',
@@ -22,7 +21,7 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
                         type: 'text',
                         text: `Identify the manga in this image. Provide your answer in the following format:
 First line: the most likely manga name.
-If there are other possible matches, list them one per line after that, up to 3 additional names.
+also return possible matches, list them one per line after that,  3 additional names.
 Do not add any extra text, numbering, or explanation. Just the names, one per line.`,
                     },
                     {
@@ -38,7 +37,7 @@ Do not add any extra text, numbering, or explanation. Just the names, one per li
     const rawResponse = gptResponse.choices[0].message.content.trim();
     const lines = rawResponse.split('\n').filter(line => line.trim().length > 0);
     const primaryGuess = lines[0] || "Unknown";
-    const alternativeGuesses = lines.slice(1, 4); // حداکثر 3 حدس اضافی
+    const alternativeGuesses = lines.slice(1, 4)
 
     // جستجوی حدس اصلی در Jikan API
     let jikanResult = { found: false, id: null, url: null };

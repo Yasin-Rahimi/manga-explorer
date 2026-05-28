@@ -34,7 +34,6 @@ export default function ResultDisplay({ primaryGuess, alternativeGuesses, jikan 
                 </div>
             </div>
 
-            {/* حدس‌های جایگزین */}
             {alternativeGuesses && alternativeGuesses.length > 0 && (
                 <div className="border-t border-white/10 pt-3">
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Other possible matches</p>
