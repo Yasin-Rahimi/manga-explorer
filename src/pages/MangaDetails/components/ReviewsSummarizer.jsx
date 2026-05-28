@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaComment, FaThumbsUp, FaThumbsDown, FaSpinner, FaCommentDots, FaRobot } from "react-icons/fa";
 import { getMangaReviews } from "../../../lib/api";
-import { askAi  } from "../../../lib/askAi";
+import { askAi  } from "../../../lib/ai/askAi";
 
 export default function ReviewsSummarizer({ mangaId, mangaTitle }) {
     const [summary, setSummary] = useState(null);

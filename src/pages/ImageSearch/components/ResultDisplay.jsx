@@ -25,9 +25,6 @@ export default function ResultDisplay({ primaryGuess, alternativeGuesses }) {
                             {primaryGuess.title}
                         </p>
                     )}
-                    {primaryGuess.found && (
-                        <p className="text-[8px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">Click to view details</p>
-                    )}
                     {!primaryGuess.found && (
                         <p className="text-[9px] sm:text-xs text-yellow-400 mt-0.5 sm:mt-1">Not found in our database</p>
                     )}

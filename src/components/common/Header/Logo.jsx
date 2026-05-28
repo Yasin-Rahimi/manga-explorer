@@ -12,7 +12,7 @@ export default function Logo() {
                 <FaBookOpen className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </div>
             <span className="text-sm sm:text-lg md:text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-gray-200 to-gray-400 group-hover:via-white group-hover:to-gray-200 transition-all duration-300 leading-tight">
-                Manga Explorer
+                Manga Lens
             </span>
         </Link>
     );

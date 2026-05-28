@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaMagic } from "react-icons/fa";
-import { askAi } from "../../../lib/askAi";
+import { askAi } from "../../../lib/ai/askAi";
 
 function isPersianText(text) {
   const persianRegex = /[\u0600-\u06FF\uFB50-\uFDFF\uFE70-\uFEFF]/;

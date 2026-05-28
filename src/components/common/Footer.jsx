@@ -21,7 +21,7 @@ export default function Footer() {
                             </div>
 
                             <span className="text-lg sm:text-xl font-extrabold tracking-tight bg-linear-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent leading-tight wrap-break-word">
-                                Manga Explorer
+                            Manga Lens
                             </span>
                         </div>
 
@@ -80,7 +80,7 @@ export default function Footer() {
 
                     <div className="flex flex-col items-center justify-between gap-4 sm:gap-5 text-center sm:text-left text-xs sm:text-sm font-medium text-gray-500 md:flex-row">
                         <p className="leading-relaxed">
-                            © {new Date().getFullYear()} Manga Explorer. All rights reserved.
+                            © {new Date().getFullYear()} Manga Lens. All rights reserved.
                         </p>
 
                         <p className="flex flex-wrap items-center justify-center gap-1.5 leading-relaxed">
