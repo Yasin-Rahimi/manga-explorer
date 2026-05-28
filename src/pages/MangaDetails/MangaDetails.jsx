@@ -10,8 +10,7 @@ import MangaGenres from "./components/MangaGenres";
 import MangaMetaPanel from "./components/MangaMetaPanel";
 import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
 import SynopsisWithTranslation from "./components/SynopsisWithTranslation";
-import ReviewsSummarizer from "./components/ReviewsSummarizer";
-import SampleReviews from "./components/SampleReviews";
+import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 
 export default function MangaDetails() {
     const { manga } = useLoaderData();
@@ -65,8 +64,7 @@ export default function MangaDetails() {
                         {/* بخش ریویوها */}
                         {!reviewsLoading && !reviewsError && (
                             <>
-                                <ReviewsSummarizer mangaTitle={manga.title} reviews={reviews} />
-                                <SampleReviews reviews={reviews} />
+                                <ReviewsSection mangaTitle={manga.title} reviews={reviews} />
                             </>
                         )}
                         {reviewsLoading && (
