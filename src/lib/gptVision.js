@@ -12,7 +12,7 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
     const dataUrl = `data:${mimeType};base64,${base64Image}`;
 
     const gptResponse = await client.chat.completions.create({
-        model: 'GPT-4o-h6kg5',
+        model: 'GPT-5-5-yvv66',
         messages: [
             {
                 role: 'user',
@@ -21,7 +21,7 @@ export async function identifyMangaFromImage(base64Image, mimeType = 'image/png'
                         type: 'text',
                         text: `Identify the manga in this image. Provide your answer in the following format:
 First line: the most likely manga name.
-also return possible matches, list them one per line after that,  3 additional names.
+also return possible matches, list them one per line after that, up to 3 additional names.
 Do not add any extra text, numbering, or explanation. Just the names, one per line.`,
                     },
                     {
@@ -37,14 +37,14 @@ Do not add any extra text, numbering, or explanation. Just the names, one per li
     const rawResponse = gptResponse.choices[0].message.content.trim();
     const lines = rawResponse.split('\n').filter(line => line.trim().length > 0);
     const primaryGuess = lines[0] || "Unknown";
-    const alternativeGuesses = lines.slice(1, 4)
+    const alternativeGuesses = lines.slice(1, 4); // حداکثر 3 حدس اضافی
 
-    // جستجوی حدس اصلی در Jikan API
-    let jikanResult = { found: false, id: null, url: null };
+    // جستجوی حدس اصلی در Jikan
+    let primaryResult = { found: false, id: null, url: null, title: primaryGuess };
     try {
         const searchResult = await searchMangaByTitle(primaryGuess);
         if (searchResult.found) {
-            jikanResult = {
+            primaryResult = {
                 found: true,
                 id: searchResult.id,
                 url: searchResult.url,
@@ -52,12 +52,33 @@ Do not add any extra text, numbering, or explanation. Just the names, one per li
             };
         }
     } catch (err) {
-        console.error("Jikan search failed:", err);
+        console.error("Jikan search failed for primary guess:", err);
     }
 
+    // جستجوی حدس‌های جایگزین به صورت همزمان
+    const alternativeMatches = await Promise.all(
+        alternativeGuesses.map(async (guess) => {
+            try {
+                const res = await searchMangaByTitle(guess);
+                if (res.found) {
+                    return {
+                        title: guess,
+                        found: true,
+                        id: res.id,
+                        url: res.url
+                    };
+                } else {
+                    return { title: guess, found: false };
+                }
+            } catch (err) {
+                console.error(`Jikan search failed for alternative guess "${guess}":`, err);
+                return { title: guess, found: false };
+            }
+        })
+    );
+
     return {
-        primaryGuess,
-        alternativeGuesses,
-        jikan: jikanResult
+        primaryGuess: primaryResult,
+        alternativeGuesses: alternativeMatches
     };
 }

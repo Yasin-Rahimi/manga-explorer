@@ -14,14 +14,12 @@ export default function ImageUploader() {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState({
-        primaryGuess: '',
-        alternativeGuesses: [],
-        jikan: { found: false }
+        primaryGuess: { title: '', found: false, url: null },
+        alternativeGuesses: []
     });
     const [error, setError] = useState('');
     const fileInputRef = useRef(null);
 
-    // بازیابی نتیجه ذخیره شده هنگام بازگشت از صفحات دیگر
     useEffect(() => {
         const saved = sessionStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -33,9 +31,8 @@ export default function ImageUploader() {
         }
     }, []);
 
-    // ذخیره نتیجه در sessionStorage
     useEffect(() => {
-        if (result.primaryGuess) {
+        if (result.primaryGuess?.title) {
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
         } else {
             sessionStorage.removeItem(STORAGE_KEY);
@@ -58,14 +55,14 @@ export default function ImageUploader() {
         setError('');
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
-        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
+        setResult({ primaryGuess: { title: '', found: false, url: null }, alternativeGuesses: [] });
         sessionStorage.removeItem(STORAGE_KEY);
     };
 
     const clearImage = () => {
         setSelectedFile(null);
         setPreviewUrl(null);
-        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
+        setResult({ primaryGuess: { title: '', found: false, url: null }, alternativeGuesses: [] });
         setError('');
         sessionStorage.removeItem(STORAGE_KEY);
         if (fileInputRef.current) fileInputRef.current.value = '';
@@ -79,7 +76,7 @@ export default function ImageUploader() {
 
         setLoading(true);
         setError('');
-        setResult({ primaryGuess: '', alternativeGuesses: [], jikan: { found: false } });
+        setResult({ primaryGuess: { title: '', found: false, url: null }, alternativeGuesses: [] });
 
         try {
             const reader = new FileReader();
@@ -104,14 +101,14 @@ export default function ImageUploader() {
     const triggerFileInput = () => fileInputRef.current.click();
 
     return (
-        <div className="w-full max-w-2xl mx-auto p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
+        <div className="w-full max-w-2xl mx-auto px-3 py-4 sm:p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-xl">
             <div className="flex items-center gap-2 mb-2">
-                <FaSearch className="text-purple-400 text-2xl" />
-                <h2 className="text-2xl font-bold text-white">Search Manga by Image</h2>
+                <FaSearch className="text-purple-400 text-xl sm:text-2xl" />
+                <h2 className="text-xl sm:text-2xl font-bold text-white">Search Manga by Image</h2>
             </div>
-            <p className="text-gray-300 text-sm mb-6 flex items-center gap-1">
-                <FaInfoCircle className="text-gray-400" />
-                Upload a manga panel or cover. AI will try to identify it and suggest similar ones.
+            <p className="text-gray-300 text-xs sm:text-sm mb-4 sm:mb-6 flex items-center gap-1">
+                <FaInfoCircle className="text-gray-400 shrink-0" />
+                <span>Upload a manga panel or cover. AI will try to identify it and suggest similar ones.</span>
             </p>
 
             <input
@@ -139,7 +136,6 @@ export default function ImageUploader() {
             <ResultDisplay
                 primaryGuess={result.primaryGuess}
                 alternativeGuesses={result.alternativeGuesses}
-                jikan={result.jikan}
             />
 
             <p className="text-xs text-gray-500 mt-6 text-center flex items-center justify-center gap-1">
