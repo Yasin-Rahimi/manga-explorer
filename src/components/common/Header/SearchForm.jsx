@@ -1,4 +1,3 @@
-// src/components/common/Header/SearchForm.jsx
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Form, useNavigation } from "react-router";
 import { FaSearch } from "react-icons/fa";

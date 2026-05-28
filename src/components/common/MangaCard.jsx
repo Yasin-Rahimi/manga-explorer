@@ -162,7 +162,7 @@ export default function MangaCard({ manga }) {
         >
           {manga?.synopsis
             ? manga.synopsis.slice(0, 60) + "..."
-            : "There is no description is available for this manga."}
+            : "There is no description available for this manga in our database."}
         </p>
       </div>
     </div>
