@@ -44,7 +44,7 @@ export default function SearchModeSelector({ onTextMode, isTextModeActive }) {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-36 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-lg shadow-lg z-20 overflow-hidden">
+                <div className="absolute justify-self-center mt-2 w-36 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-lg shadow-lg z-20 overflow-hidden">
                     {options.map((opt) => (
                         <button
                             key={opt.value}

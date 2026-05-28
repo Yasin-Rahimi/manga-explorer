@@ -17,11 +17,10 @@ export default function SidebarMenu({ isOpen, onClose, onTextMode, isTextModeAct
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xl flex flex-col shadow-2xl animate-in fade-in duration-300">
             <SidebarHeader onClose={onClose} />
             <div className="flex-1 flex flex-col items-center justify-start px-4 pt-8">
-                <div className="w-full max-w-md space-y-4">
+                <div className="w-full max-w-md space-y-4 flex gap-2 justify-center">
                     {!isTextModeActive && (
                         <>
                             <div className="flex items-center justify-center gap-2 group cursor-default">
-                                <FaSearch className="w-4 h-4 text-purple-400 animate-pulse group-hover:animate-none" />
                                 <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-300 via-pink-300 to-purple-300 font-medium text-sm tracking-wide animate-shimmer bg-size-[200%_auto]">
                                     Looking for manga?
                                 </span>
