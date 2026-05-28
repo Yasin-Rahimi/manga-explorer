@@ -76,3 +76,20 @@
 .animate-slide-in-right {
     animation: slide-in-right 0.3s ease-out;
 }
+
+/* اضافه کردن به انتهای فایل index.css */
+@keyframes shimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 3s ease infinite;
+}
