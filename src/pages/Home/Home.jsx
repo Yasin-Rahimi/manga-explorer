@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+// src/pages/Home/Home.jsx
+import { useState, useEffect } from "react";
 import HeroSection from "./components/Hero/HeroSection";
 import TrendingSection from "./components/TrendingSection";
 import { getTopManga } from "../../lib/api";
 
 const ERROR_MESSAGE = "Failed to load trending manga.";
+const STORAGE_PAGE_KEY = "trendingPage";
 
 export default function Home() {
     const [trending, setTrending] = useState([]);
@@ -11,75 +13,35 @@ export default function Home() {
     const [lastPage, setLastPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [keyboardMode, setKeyboardMode] = useState('hero');
 
-    const heroRef = useRef(null);
-    const trendingRef = useRef(null);
-
-    // تعویض حالت با کلیدهای بالا و پایین
+    // بازیابی صفحه ذخیره شده هنگام mount شدن کامپوننت
     useEffect(() => {
-        const handleGlobalKeys = (e) => {
-            if (e.key === 'ArrowDown' && keyboardMode === 'hero') {
-                e.preventDefault();
-                setKeyboardMode('trending');
-                // اسکرول به بخش ترندینگ
-                trendingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else if (e.key === 'ArrowUp' && keyboardMode === 'trending') {
-                e.preventDefault();
-                setKeyboardMode('hero');
-                heroRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const savedPage = sessionStorage.getItem(STORAGE_PAGE_KEY);
+        if (savedPage) {
+            const parsedPage = parseInt(savedPage, 10);
+            if (!isNaN(parsedPage) && parsedPage !== page) {
+                setPage(parsedPage);
             }
-        };
-        window.addEventListener('keydown', handleGlobalKeys);
-        return () => window.removeEventListener('keydown', handleGlobalKeys);
-    }, [keyboardMode]);
+        }
+    }, []); // فقط یک بار اجرا می‌شود
 
-    // تغییر خودکار با اسکرول
+    // ذخیره صفحه در sessionStorage هر بار که تغییر می‌کند
     useEffect(() => {
-        const handleScroll = () => {
-            if (!heroRef.current) return;
-            const heroBottom = heroRef.current.getBoundingClientRect().bottom;
-            if (heroBottom < 100) {
-                if (keyboardMode !== 'trending') setKeyboardMode('trending');
-            } else {
-                if (keyboardMode !== 'hero') setKeyboardMode('hero');
-            }
-        };
-        window.addEventListener('scroll', handleScroll);
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [keyboardMode]);
+        // همیشه صفحه جاری را ذخیره کن (حتی صفحه ۱، تا در صورت بازگشت از صفحات دیگر بازیابی شود)
+        sessionStorage.setItem(STORAGE_PAGE_KEY, page);
+    }, [page]);
 
-    // کلیک روی بخش‌ها
-    useEffect(() => {
-        const handleClickOnTrending = (e) => {
-            if (trendingRef.current?.contains(e.target)) {
-                setKeyboardMode('trending');
-            }
-        };
-        const handleClickOnHero = (e) => {
-            if (heroRef.current?.contains(e.target)) {
-                setKeyboardMode('hero');
-            }
-        };
-        document.addEventListener('click', handleClickOnTrending);
-        document.addEventListener('click', handleClickOnHero);
-        return () => {
-            document.removeEventListener('click', handleClickOnTrending);
-            document.removeEventListener('click', handleClickOnHero);
-        };
-    }, []);
-
-    // fetch data مانند قبل
+    // دریافت داده‌ها هنگام تغییر صفحه
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const res = await getTopManga(page);
-                setTrending(res.data ?? []);
+                const fetchedData = res.data ?? [];
+                setTrending(fetchedData);
                 setLastPage(res.pagination?.last_visible_page ?? 1);
-            } catch {
+            } catch (err) {
                 setError(ERROR_MESSAGE);
                 setTrending([]);
             } finally {
@@ -95,25 +57,15 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
-            <div ref={heroRef}>
-                <HeroSection 
-                    mangas={heroMangas} 
-                    keyboardMode={keyboardMode}
-                    setKeyboardMode={setKeyboardMode}
-                />
-            </div>
-            <div ref={trendingRef}>
-                <TrendingSection
-                    trending={trendingMangas}
-                    page={page}
-                    setPage={setPage}
-                    lastPage={lastPage}
-                    loading={loading}
-                    error={error}
-                    keyboardMode={keyboardMode}
-                    setKeyboardMode={setKeyboardMode}
-                />
-            </div>
+            <HeroSection mangas={heroMangas} />
+            <TrendingSection
+                trending={trendingMangas}
+                page={page}
+                setPage={setPage}
+                lastPage={lastPage}
+                loading={loading}
+                error={error}
+            />
         </div>
     );
 }
