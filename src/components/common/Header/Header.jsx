@@ -28,13 +28,6 @@ export default function Header() {
                     ) : (
                         <>
                             <BackButton />
-                            <Link
-                                to="/image-search"
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-purple-600/30 hover:bg-purple-600 transition-all duration-200 text-white"
-                                title="Search by image"
-                            >
-                                <FaCamera className="w-5 h-5" />
-                            </Link>
                         </>
                     )}
                 </div>
