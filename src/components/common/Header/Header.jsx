@@ -24,7 +24,7 @@ export default function Header() {
             <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/30 backdrop-blur-xl shadow-lg shadow-black/20">
                 <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-5 px-2 sm:px-6 md:px-8 py-2 sm:py-4">
                     <Logo />
-                    <div className="hidden sm:flex items-center gap-3">
+                    <div className="hidden md:flex items-center gap-3">
                         {isHome ? (
                             isTextModeActive ? (
                                 <SearchForm 
@@ -35,7 +35,7 @@ export default function Header() {
                             ) : (
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2 group cursor-default">
-                                        <span className="text-l text-transparent bg-clip-text bg-linear-to-r from-purple-300 via-pink-300 to-purple-300 font-medium tracking-wide animate-shimmer bg-size-[200%_auto]">
+                                        <span className="font-bold text-l text-transparent bg-clip-text bg-linear-to-r from-purple-300 via-pink-300 to-purple-300 tracking-wide animate-shimmer bg-size-[200%_auto]">
                                             Looking for manga?
                                         </span>
                                     </div>
@@ -46,7 +46,7 @@ export default function Header() {
                             <BackButton />
                         )}
                     </div>
-                    <div className="flex sm:hidden items-center gap-2">
+                    <div className="flex md:hidden items-center gap-2">
                         {!isHome && <BackButton />}
                         {isHome && <MobileMenuButton onClick={() => setIsSidebarOpen(true)} />}
                     </div>
