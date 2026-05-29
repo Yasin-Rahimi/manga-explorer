@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FaComment, FaThumbsUp, FaThumbsDown, FaSpinner, FaCommentDots, FaRobot } from "react-icons/fa";
 import { askAi } from "../../../lib/ai/askAi";
+import { buildReviewSummaryPrompt } from "../../../lib/ai/prompts";
 
 export default function ReviewsSummarizer({ mangaTitle, reviews }) {
     const [summary, setSummary] = useState(null);
@@ -27,27 +28,8 @@ export default function ReviewsSummarizer({ mangaTitle, reviews }) {
                 })
                 .join("\n\n");
 
-            const prompt = `
-                You are a helpful assistant. Below are user reviews for the manga titled "${mangaTitle}".
-
-                ${reviewsText}
-
-                Please analyze the reviews and provide a concise summary in English, strictly in the following format:
-
-                **Positive Points:**
-                - point 1
-                - point 2
-                ...
-
-                **Negative Points:**
-                - point 1
-                - point 2
-                ...
-
-                If there are not enough points for one side, write "None". Keep each point short (one sentence max). Do not add any extra commentary.
-            `;
-
-            const aiResponse = await askAi(prompt, { temperature: 0.3, max_tokens: 400 });
+            const prompt = buildReviewSummaryPrompt(mangaTitle, reviewsText);
+            const aiResponse = await askAi(prompt);
             setSummary(aiResponse);
         } catch (err) {
             console.error(err);

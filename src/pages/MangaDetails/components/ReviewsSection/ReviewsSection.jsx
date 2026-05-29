@@ -1,6 +1,7 @@
 // src/pages/MangaDetails/components/ReviewsSection/ReviewsSection.jsx
 import { useState } from "react";
 import { askAi } from "../../../../lib/ai/askAi";
+import { buildReviewSummaryPrompt } from "../../../../lib/ai/prompts";
 import ReviewHeader from "./ReviewHeader";
 import AISummary from "./AISummary";
 import ReviewList from "./ReviewList";
@@ -10,7 +11,7 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
     const [loadingSummary, setLoadingSummary] = useState(false);
     const [summaryError, setSummaryError] = useState(null);
     const [expandedComments, setExpandedComments] = useState({});
-    const [showSummary, setShowSummary] = useState(false); // جدید
+    const [showSummary, setShowSummary] = useState(false);
 
     if (!reviews || reviews.length === 0) {
         return (
@@ -37,29 +38,10 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
                 })
                 .join("\n\n");
 
-            const prompt = `
-                You are a helpful assistant. Below are user reviews for the manga titled "${mangaTitle}".
-
-                ${reviewsText}
-
-                Please analyze the reviews and provide a concise summary in English, strictly in the following format:
-
-                **Positive Points:**
-                - point 1
-                - point 2
-                ...
-
-                **Negative Points:**
-                - point 1
-                - point 2
-                ...
-
-                If there are not enough points for one side, write "None". Keep each point short (one sentence max). Do not add any extra commentary.
-            `;
-
-            const aiResponse = await askAi(prompt, { temperature: 0.3, max_tokens: 400 });
+            const prompt = buildReviewSummaryPrompt(mangaTitle, reviewsText);
+            const aiResponse = await askAi(prompt);
             setSummary(aiResponse);
-            setShowSummary(true); // بعد از تولید، خلاصه نشان داده شود
+            setShowSummary(true);
         } catch (err) {
             console.error(err);
             setSummaryError("Failed to summarize reviews. Please try again.");

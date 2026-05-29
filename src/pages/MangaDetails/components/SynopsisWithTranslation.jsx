@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaMagic } from "react-icons/fa";
 import { askAi } from "../../../lib/ai/askAi";
+import { buildTranslationPrompt } from "../../../lib/ai/prompts";
 
 function isPersianText(text) {
   const persianRegex = /[\u0600-\u06FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
@@ -14,23 +15,18 @@ export default function SynopsisWithTranslation({ originalSynopsis }) {
   const [showTranslation, setShowTranslation] = useState(false);
 
   const handleTranslateOrToggle = async () => {
-    // اگر ترجمه وجود دارد و در حال نمایش اصلی هستیم، فقط نمایش را تغییر بده
     if (translatedSynopsis && !showTranslation) {
       setShowTranslation(true);
       return;
     }
-    // اگر ترجمه وجود دارد و در حال نمایش ترجمه هستیم، به اصلی برگرد
     if (translatedSynopsis && showTranslation) {
       setShowTranslation(false);
       return;
     }
-    // در غیر این صورت، ترجمه را دریافت کن
     setIsTranslating(true);
     setTranslationError(null);
     try {
-      const prompt =
-        "You are a professional tَranslator. Only translate the user's text to PERSIAN. Do not introduce yourself. Do not explain anything. Output only the translated text." +
-        originalSynopsis;
+      const prompt = buildTranslationPrompt(originalSynopsis);
       const translated = await askAi(prompt);
       setTranslatedSynopsis(translated);
       setShowTranslation(true);
