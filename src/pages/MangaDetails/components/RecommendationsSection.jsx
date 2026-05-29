@@ -36,10 +36,6 @@ export default function RecommendationsSection({ recommendations }) {
                                 <h3 className="text-xs font-semibold text-white line-clamp-2 leading-tight">
                                     {manga.title}
                                 </h3>
-                                <div className="flex items-center mt-1">
-                                    <span className="text-yellow-400 text-xs mr-1">⭐</span>
-                                    <span className="text-xs text-gray-400">{manga.score ?? "N/A"}</span>
-                                </div>
                             </div>
                         </div>
                     );
