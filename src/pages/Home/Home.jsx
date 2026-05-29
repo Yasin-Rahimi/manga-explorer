@@ -83,7 +83,7 @@ export default function Home() {
     const trendingMangas = trending.slice(5);
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
+        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white">
             <div ref={heroRef}>
                 <HeroSection 
                     mangas={heroMangas} 

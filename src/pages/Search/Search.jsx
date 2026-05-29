@@ -28,7 +28,7 @@ export default function Search() {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
+        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
             <main className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10">
                 <SearchHeader
                     query={query}
