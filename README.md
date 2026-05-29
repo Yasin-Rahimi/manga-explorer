@@ -1,9 +1,6 @@
 # 📚 Manga Lens
 
 **Manga Lens** is a modern web application for exploring, searching, and discovering manga. It offers a rich, responsive UI with both traditional and AI-powered search, image-based manga identification, and detailed manga pages with reviews, recommendations, and multilingual synopsis translation.
-
-![Manga Lens Screenshot](screenshot.png)
-
 ---
 
 ## ✨ Features
@@ -39,14 +36,6 @@ Read community reviews and get an AI-generated summary highlighting the most fre
 ### 💡 Recommendations
 
 Discover similar manga based on the currently viewed title.
-
-### 🌗 Dark & Light Mode
-
-Fully supports both dark and light themes with:
-
-* System preference detection
-* Manual theme switching
-* Persistent user preference
 
 ### 📱 Responsive Design
 
