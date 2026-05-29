@@ -85,8 +85,7 @@ Before running the project, make sure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/manga-lens.git
-cd manga-lens
+git clone https://github.com/Yasin-Rahimi/manga-explorer.git
 ```
 
 ### 2. Install Dependencies
