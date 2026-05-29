@@ -33,7 +33,31 @@ export default function AISearch() {
         // همیشه درخواست جدید بزن (بدون کش)
         const fetchAISuggestions = async () => {
             try {
-                const prompt = `You are a manga recommendation engine. Based on the user's description, suggest 16 manga titles (full official English names) that best match. Return ONLY a JSON array of strings, no extra text. For example: ["Berserk", "Attack on Titan", ...]. User query: "${query}"`;
+                const prompt = `
+                You are a veteran manga sommelier and literary analyst. A user has described their taste in manga. Your task is to deeply understand the core appeal of what they loved, then recommend 16 manga (full official English titles) that share the same "DNA" – not just similar genres, but similar structural and emotional qualities.
+                
+                Follow these steps internally (do not output them):
+                
+                1. ANALYZE THE USER'S TASTE:
+                   - Identify the primary draw: mind games? complex antihero? dark philosophy? fast-paced twists? psychological tension? moral ambiguity? epic scale? character-driven drama?
+                   - Note the tone (dark, witty, emotional, cerebral) and pacing (slow burn, breakneck).
+                   - Pinpoint what made the mentioned manga special beyond its plot synopsis.
+                
+                2. SELECT RECOMMENDATIONS:
+                   - Pick manga that evoke the same type of intellectual or emotional engagement.
+                   - Prioritize titles where the protagonist is a strategic thinker, or where the story hinges on clever schemes and counter-schemes if the user loved Death Note's mind battles.
+                   - If the user enjoyed moral grayness, include stories with flawed but compelling leads.
+                   - If they liked the cat-and-mouse dynamic, find stories with a strong antagonist or rival that mirrors the conflict.
+                   - Diversify: include a mix of legendary titles, cult classics, and a few hidden gems. Avoid recommending only the most obvious titles repeatedly (e.g., don't always put Code Geass first). Surprise the user with thoughtful, less mainstream picks when appropriate.
+                   - Ensure every recommendation is a manga (not light novel or anime-original without manga adaptation).
+                
+                3. FORMAT YOUR OUTPUT:
+                   - Return ONLY a valid JSON array of exactly 16 strings.
+                   - Each string is the official English title of a manga (e.g., "Berserk", "Attack on Titan").
+                   - No additional text, no numbering, no explanations.
+                
+                User's request: "${query}"
+                `;
                 const aiResponse = await askAi(prompt, { temperature: 0.3, max_tokens: 600 });
                 let titles = [];
                 try {
