@@ -5,7 +5,6 @@ import Footer from "../components/common/Footer";
 import ScrollToTop from "../components/common/ScrollToTop";
 
 export default function MainLayout() {
-
     const navigate = useNavigate();
 
     const [query, setQuery] = useState("");
@@ -26,8 +25,7 @@ export default function MainLayout() {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
-
+        <div className="min-h-screen flex flex-col bg-linear-to-br from-black via-purple-950 to-black text-white">
             <ScrollToTop />
 
             <Header
@@ -38,7 +36,7 @@ export default function MainLayout() {
                 submitClicked={submitClicked}
             />
 
-            <main>
+            <main className="flex-1">
                 <Outlet />
             </main>
 
