@@ -1,7 +1,7 @@
 // src/pages/MangaDetails/MangaDetails.jsx
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
-import { getMangaReviews } from "../../lib/api";
+import { getMangaReviews, getMangaRecommendations } from "../../lib/api";
 import MangaBackground from "./components/MangaBackground";
 import MangaCover from "./components/MangaCover";
 import MangaTitleSection from "./components/MangaTitleSection";
@@ -11,26 +11,25 @@ import MangaMetaPanel from "./components/MangaMetaPanel";
 import MangaDetailsNotFound from "./components/MangaDetailsNotFound";
 import SynopsisWithTranslation from "./components/SynopsisWithTranslation";
 import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
+import RecommendationsSection from "./components/RecommendationsSection";
 
-/**
- * Manga detail page – shows full information, reviews and background.
- */
 export default function MangaDetails() {
     const { manga } = useLoaderData();
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [reviewsError, setReviewsError] = useState(null);
+    const [recommendations, setRecommendations] = useState([]);
+    const [recommendationsLoading, setRecommendationsLoading] = useState(true);
+    const [recommendationsError, setRecommendationsError] = useState(null);
 
     useEffect(() => {
         if (!manga) return;
         const fetchReviews = async () => {
             try {
                 const data = await getMangaReviews(manga.mal_id);
-                // getMangaReviews now returns { data: [] } on upstream failure
                 setReviews(data.data || []);
                 setReviewsError(null);
             } catch (err) {
-                // This catch only triggers on network errors etc.
                 console.error(err);
                 setReviewsError("Reviews are temporarily unavailable.");
             } finally {
@@ -38,6 +37,23 @@ export default function MangaDetails() {
             }
         };
         fetchReviews();
+    }, [manga]);
+
+    useEffect(() => {
+        if (!manga) return;
+        const fetchRecommendations = async () => {
+            try {
+                const data = await getMangaRecommendations(manga.mal_id);
+                setRecommendations(data.data || []);
+                setRecommendationsError(null);
+            } catch (err) {
+                console.error(err);
+                setRecommendationsError("Recommendations are temporarily unavailable.");
+            } finally {
+                setRecommendationsLoading(false);
+            }
+        };
+        fetchRecommendations();
     }, [manga]);
 
     if (!manga) return <MangaDetailsNotFound />;
@@ -48,7 +64,7 @@ export default function MangaDetails() {
     const originalSynopsis = manga.synopsis || "No description available.";
 
     return (
-        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
             <MangaBackground imageUrl={coverImageUrl} />
             <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
                 <div className="mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
@@ -83,6 +99,26 @@ export default function MangaDetails() {
                         {reviewsError && (
                             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
                                 {reviewsError}
+                            </div>
+                        )}
+
+                        {/* بخش پیشنهادها */}
+                        {!recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
+                            <RecommendationsSection recommendations={recommendations} />
+                        )}
+                        {!recommendationsLoading && !recommendationsError && recommendations.length === 0 && (
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
+                                No recommendations available for this manga.
+                            </div>
+                        )}
+                        {recommendationsLoading && (
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
+                                Loading recommendations...
+                            </div>
+                        )}
+                        {recommendationsError && (
+                            <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
+                                {recommendationsError}
                             </div>
                         )}
                     </div>

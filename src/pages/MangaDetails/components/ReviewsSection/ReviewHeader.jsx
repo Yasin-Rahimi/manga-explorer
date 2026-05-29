@@ -32,7 +32,7 @@ export default function ReviewHeader({
     return (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-                <FaComments className="text-purple-400 text-xl" />
+                <span className="inline-block w-1.5 h-5 rounded-full bg-purple-500"></span>
                 <h3 className="text-lg font-semibold text-white">User Reviews</h3>
             </div>
             <button

@@ -1,5 +1,5 @@
 // src/pages/MangaDetails/components/ReviewsSection/AISummary.jsx
-import { FaThumbsUp, FaThumbsDown, FaCommentDots, FaRobot } from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown, FaRobot } from "react-icons/fa";
 
 export default function AISummary({ summary, error }) {
     if (error) {
@@ -39,9 +39,6 @@ export default function AISummary({ summary, error }) {
                     <div className="font-semibold text-gray-100 whitespace-pre-wrap">
                         {extractNegative(summary)}
                     </div>
-                </div>
-                <div className="text-xs text-gray-400 flex items-center gap-1 mt-2">
-                    <FaCommentDots /> Based on user reviews analyzed by AI
                 </div>
             </div>
         </div>

@@ -94,3 +94,17 @@ export async function searchMangaByTitle(title) {
     }
 }
 
+
+/**
+ * Fetches manga recommendations for a given manga.
+ * Returns an empty array on failure.
+ */
+export async function getMangaRecommendations(mangaId) {
+    try {
+        const res = await api.get(`/manga/${mangaId}/recommendations`);
+        return res.data;
+    } catch (error) {
+        console.warn(`Could not fetch recommendations for manga ${mangaId}:`, error.message);
+        return { data: [] };
+    }
+}

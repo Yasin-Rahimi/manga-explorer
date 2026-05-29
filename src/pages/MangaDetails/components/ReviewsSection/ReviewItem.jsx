@@ -17,15 +17,6 @@ export default function ReviewItem({ review, index, isExpanded, onToggleExpand }
                     <span>{review.date ? new Date(review.date).toLocaleDateString() : 'Unknown date'}</span>
                 </div>
             </div>
-            <div className="flex items-center gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
-                    <FaStar
-                        key={i}
-                        className={`w-3 h-3 ${i < (review.score || 0) ? 'text-yellow-400' : 'text-gray-600'}`}
-                    />
-                ))}
-                <span className="text-xs text-gray-400 ml-2">({review.score || 'N/A'})</span>
-            </div>
             <p className="text-gray-300 text-sm leading-relaxed">
                 {isExpanded ? fullText : shortText}
             </p>
