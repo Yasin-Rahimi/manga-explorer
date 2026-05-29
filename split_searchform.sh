@@ -1,341 +1,325 @@
 #!/bin/bash
 
-# ── 1. Extract the search input + mode toggle into SearchInput.jsx ──
-cat << 'EOF' > src/components/common/Header/SearchInput.jsx
-import { useRef, useEffect } from "react";
-import { FaSearch, FaRobot } from "react-icons/fa";
+# ── Remove unused files ──
+rm -f src/pages/MangaDetails/components/SampleReviews.jsx
+rm -f src/pages/MangaDetails/components/ReviewsSummarizer.jsx
+rm -f src/pages/MangaDetails/components/MangaSynopsis.jsx
+rm -f src/pages/MangaDetails/components/MangaDetailsLoading.jsx
+rm -f src/components/common/Header/SearchForm.jsx.bak
+rm -f src/components/common/Header/SearchInput.jsx
+rm -f src/components/common/Header/SearchSuggestions.jsx
 
-/**
- * Search input with integrated AI/normal mode toggle.
- * The sliding purple indicator shows the currently active mode.
- */
-export default function SearchInput({
-    isAIMode,
-    isQueryEmpty,
-    isDesktop,
-    inputValue,
-    inputRef,
-    onInputChange,
-    onFocus,
-    onToggleMode
-}) {
-    // Focus input when "/" is pressed (only on desktop, outside mobile menu)
+# ── Fix AISearch.jsx ──
+cat <<'EOF' > src/pages/AISearch/AISearch.jsx
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigation } from "react-router";
+import { askAi } from "../../lib/ai/askAi";
+import { buildAISearchPrompt } from "../../lib/ai/prompts";
+import { searchManga } from "../../lib/api";
+import MangaCard from "../../components/common/MangaCard";
+import Loading from "../../components/ui/Loading";
+import Error from "../../components/ui/Error";
+import Empty from "../../components/ui/Empty";
+
+export default function AISearch() {
+
+    const [searchParams] = useSearchParams();
+    const navigation = useNavigation();
+    const query = searchParams.get("q") || "";
+    const loading = navigation.state === "loading" || navigation.state === "submitting";
+    const [mangas, setMangas] = useState([]);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
-        const handleSlash = (e) => {
-            if (e.key === '/' && document.activeElement !== inputRef.current) {
-                e.preventDefault();
-                inputRef.current?.focus();
-            }
-        };
-        document.addEventListener('keydown', handleSlash);
-        return () => document.removeEventListener('keydown', handleSlash);
-    }, [inputRef]);
 
-    return (
-        <div className="relative flex-1">
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center z-10">
-                <div
-                    className={`absolute left-0 top-0 h-full w-7 transition-all duration-300 ease-out bg-purple-500/30 rounded-md ${
-                        isAIMode ? 'translate-x-full' : 'translate-x-0'
-                    }`}
-                    style={{ width: '28px' }}
-                />
-                <button
-                    type="button"
-                    onClick={() => onToggleMode('normal')}
-                    className={`cursor-pointer relative p-1 rounded-md transition-colors w-7 h-7 flex items-center justify-center ${
-                        !isAIMode ? 'text-purple-400' : 'text-gray-400 hover:text-white'
-                    }`}
-                    title="Normal search"
-                >
-                    <FaSearch className="w-4 h-4" />
-                </button>
-                <button
-                    type="button"
-                    onClick={() => onToggleMode('ai')}
-                    className={`cursor-pointer relative p-1 rounded-md transition-colors w-7 h-7 flex items-center justify-center ${
-                        isAIMode ? 'text-purple-400' : 'text-gray-400 hover:text-white'
-                    }`}
-                    title="AI search"
-                >
-                    <FaRobot className="w-4 h-4" />
-                </button>
-            </div>
-            <input
-                ref={inputRef}
-                name="q"
-                type="text"
-                autoComplete="new-password"
-                value={inputValue}
-                onChange={onInputChange}
-                onFocus={onFocus}
-                placeholder={isAIMode ? "Ask AI to find manga..." : "Search for manga..."}
-                className={`
-                    w-full pl-18 pr-3 py-2 text-sm rounded-xl border transition-all duration-300 focus:outline-none focus:ring-2 text-white placeholder-gray-400
-                    ${isAIMode 
-                        ? 'border-purple-400 bg-purple-900/30 focus:ring-purple-500/50 shadow-[0_0_12px_rgba(168,85,247,0.4)]' 
-                        : 'bg-white/5 border-white/10 focus:ring-purple-500/50 focus:bg-white/10'
-                    }
-                    ${isQueryEmpty ? 'border-red-500' : ''}
-                `}
-            />
-        </div>
-    );
-}
-EOF
-
-# ── 2. Extract the suggestion dropdown wrapper into SearchSuggestions.jsx ──
-cat << 'EOF' > src/components/common/Header/SearchSuggestions.jsx
-import SuggestionsDropdown from "./SuggestionsDropdown";
-
-/**
- * Conditionally renders the suggestion dropdown based on device,
- * loading state, and available suggestions.
- */
-export default function SearchSuggestions({
-    isDesktop,
-    isMobileMenu,
-    showSuggestions,
-    suggestions,
-    isLoadingSuggestions,
-    activeIndex,
-    onSuggestionClick,
-    onMouseEnter
-}) {
-    if (!showSuggestions || suggestions.length === 0) return null;
-
-    const dropdown = (
-        <div className="absolute left-0 right-0 top-full mt-2 z-50">
-            <SuggestionsDropdown
-                suggestions={suggestions}
-                activeIndex={activeIndex}
-                onSuggestionClick={onSuggestionClick}
-                onMouseEnter={onMouseEnter}
-                isLoading={isLoadingSuggestions}
-            />
-        </div>
-    );
-
-    // Desktop always shows, mobile only inside the mobile menu sidebar
-    if (isDesktop) return dropdown;
-    if (isMobileMenu) return dropdown;
-    return null;
-}
-EOF
-
-# ── 3. Rewrite SearchForm.jsx to use the new sub‑components ──
-cat << 'EOF' > src/components/common/Header/SearchForm.jsx
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Form, useNavigate } from "react-router";
-import SearchInput from "./SearchInput";
-import SearchSuggestions from "./SearchSuggestions";
-
-function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-function useMediaQuery(query) {
-    const [matches, setMatches] = useState(false);
-    useEffect(() => {
-        const media = window.matchMedia(query);
-        if (media.matches !== matches) setMatches(media.matches);
-        const listener = (e) => setMatches(e.matches);
-        media.addEventListener("change", listener);
-        return () => media.removeEventListener("change", listener);
-    }, [query, matches]);
-    return matches;
-}
-
-export default function SearchForm({ cameraButton, isMobileMenu = false, onSearchComplete }) {
-    const navigate = useNavigate();
-    const [isAIMode, setIsAIMode] = useState(false);
-    const [isQueryEmpty, setIsQueryEmpty] = useState(false);
-    const [suggestions, setSuggestions] = useState([]);
-    const [showSuggestions, setShowSuggestions] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-    const [activeIndex, setActiveIndex] = useState(-1);
-    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-    const abortControllerRef = useRef(null);
-    const wrapperRef = useRef(null);
-    const inputRef = useRef(null);
-    const isDesktop = useMediaQuery("(min-width: 640px)");
-
-    const fetchSuggestions = useCallback(async (query) => {
-        if (!isDesktop) {
-            setSuggestions([]);
+        if (!query) {
+            setError("No search query provided.");
             return;
         }
-        if (!query.trim()) {
-            setSuggestions([]);
-            return;
-        }
-        if (abortControllerRef.current) abortControllerRef.current.abort();
-        const controller = new AbortController();
-        abortControllerRef.current = controller;
 
-        setIsLoadingSuggestions(true);
-        try {
-            const data = await searchManga(query, { signal: controller.signal });
-            const sorted = (data?.data ?? [])
-                .slice()
-                .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-            const results = sorted.slice(0, 3);
-            const customSuggestions = [{ title: query, isCustom: true }, ...results];
-            setSuggestions(customSuggestions);
-            setActiveIndex(-1);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                console.error("Failed to fetch suggestions", err);
-                setSuggestions([]);
-            }
-        } finally {
-            setIsLoadingSuggestions(false);
-        }
-    }, [isDesktop]);
-
-    const debouncedFetch = useCallback(debounce(fetchSuggestions, 200), [fetchSuggestions]);
-
-    useEffect(() => {
-        if (!isDesktop) {
-            setSuggestions([]);
-            setShowSuggestions(false);
-            return;
-        }
-        if (inputValue.trim()) {
-            debouncedFetch(inputValue);
-            setShowSuggestions(true);
-        } else {
-            setSuggestions([]);
-            setShowSuggestions(false);
-            setIsLoadingSuggestions(false);
-        }
-    }, [inputValue, debouncedFetch, isDesktop]);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setShowSuggestions(false);
-                setActiveIndex(-1);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    useEffect(() => {
-        if (!showSuggestions || suggestions.length === 0) return;
-        const handleKeyDown = (e) => {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                setActiveIndex((prev) => (prev + 1) % suggestions.length);
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                setActiveIndex((prev) => (prev - 1 + suggestions.length) % suggestions.length);
-            } else if (e.key === "Enter" && activeIndex >= 0) {
-                e.preventDefault();
-                const selected = suggestions[activeIndex];
-                if (selected) {
-                    setInputValue(selected.title);
-                    setShowSuggestions(false);
-                    if (isMobileMenu && onSearchComplete) onSearchComplete();
-                    performSearch(isAIMode, selected.title);
+        const fetchAISuggestions = async () => {
+            try {
+                const prompt = buildAISearchPrompt(query);
+                const aiResponse = await askAi(prompt);
+                let titles = [];
+                
+                try {
+                    titles = JSON.parse(aiResponse);
+                    if (!Array.isArray(titles)) throw new Error();
+                } catch {
+                    titles = aiResponse.split(/\n|,/).map(s => s.trim().replace(/[\[\]"']/g, '')).filter(Boolean);
                 }
-            } else if (e.key === "Escape") {
-                setShowSuggestions(false);
-                setActiveIndex(-1);
-                inputRef.current?.focus();
+
+                const uniqueTitles = [...new Map(titles.map(t => [t.toLowerCase(), t])).values()];
+                const finalTitles = uniqueTitles.slice(0, 16);
+
+                const mangaPromises = finalTitles.map(async (title) => {
+                    try {
+                        const result = await searchManga(title);
+                        if (result.data && result.data.length > 0) {
+                            return result.data[0];
+                        }
+                        return null;
+                    } catch {
+                        return null;
+                    }
+                });
+
+                const results = await Promise.all(mangaPromises);
+                const validMangas = results.filter(m => m !== null);
+                setMangas(validMangas);
+
+            } catch (err) {
+                console.error(err);
+                setError("Failed to get AI recommendations. Please try again.");
             }
         };
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [showSuggestions, suggestions, activeIndex, isMobileMenu, onSearchComplete, isAIMode]);
 
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
-        setIsQueryEmpty(false);
-    };
+        fetchAISuggestions();
 
-    const handleSuggestionClick = (suggestion) => {
-        setInputValue(suggestion.title);
-        setShowSuggestions(false);
-        if (isMobileMenu && onSearchComplete) onSearchComplete();
-        performSearch(isAIMode, suggestion.title);
-    };
+    }, [query]);
 
-    const performSearch = (useAI, queryText) => {
-        const searchQuery = queryText || inputValue.trim();
-        if (!searchQuery) {
-            setIsQueryEmpty(true);
-            return;
-        }
-        if (isMobileMenu && onSearchComplete) onSearchComplete();
-
-        if (useAI) {
-            navigate(`/ai-search?q=${encodeURIComponent(searchQuery)}`, { state: { fresh: true } });
-        } else {
-            window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!inputValue.trim()) {
-            setIsQueryEmpty(true);
-            return;
-        }
-        performSearch(isAIMode, inputValue.trim());
-    };
-
-    const toggleMode = (mode) => {
-        setIsAIMode(mode === 'ai');
-    };
-
-    const handleInputFocus = () => {
-        if (isDesktop && inputValue.trim()) setShowSuggestions(true);
-    };
+    if (loading) return <div className="min-h-screen flex items-center justify-center"><Loading text="AI is finding best matches..." /></div>;
+    if (error) return <div className="min-h-screen flex items-center justify-center"><Error message={error} /></div>;
+    if (!loading && mangas.length === 0) return <div className="min-h-screen flex items-center justify-center"><Empty message="No manga found for your description." /></div>;
 
     return (
-        <div
-            className={`relative flex items-center gap-2 ${isMobileMenu ? 'w-full' : 'w-full sm:w-96 md:w-100'}`}
-            ref={wrapperRef}
-        >
-            <Form
-                method="get"
-                action="/search"
-                className="flex-1 relative flex items-stretch gap-2"
-                onSubmit={handleSubmit}
-            >
-                <SearchInput
-                    isAIMode={isAIMode}
-                    isQueryEmpty={isQueryEmpty}
-                    isDesktop={isDesktop}
-                    inputValue={inputValue}
-                    inputRef={inputRef}
-                    onInputChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                    onToggleMode={toggleMode}
-                />
-            </Form>
 
-            {cameraButton}
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white py-8 px-4">
+            
+            <div className="max-w-7xl mx-auto">
+                
+                <div className="mb-6">
+                    
+                    <h1 className="text-2xl font-bold mt-2">
+                        AI Recommendations for:{" "}
+                        <span className="text-purple-400">"{query}"</span>
+                    </h1>
+                    
+                    <p className="text-gray-400 text-sm mt-1">
+                        Showing {mangas.length} results
+                    </p>
+                    
+                </div>
 
-            <SearchSuggestions
-                isDesktop={isDesktop}
-                isMobileMenu={isMobileMenu}
-                showSuggestions={showSuggestions}
-                suggestions={suggestions}
-                isLoadingSuggestions={isLoadingSuggestions}
-                activeIndex={activeIndex}
-                onSuggestionClick={handleSuggestionClick}
-                onMouseEnter={(idx) => setActiveIndex(idx)}
-            />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {mangas.map(manga => (
+                        <MangaCard key={manga.mal_id} manga={manga} />
+                    ))}
+                </div>
+
+            </div>
+
         </div>
     );
 }
 EOF
 
-echo "✅ SearchForm split into SearchInput and SearchSuggestions components."
+# ── Fix MainLayout.jsx ──
+cat <<'EOF' > src/layouts/MainLayout.jsx
+import { Outlet } from "react-router";
+import Header from "../components/common/Header/Header";
+import Footer from "../components/common/Footer";
+import ScrollToTop from "../components/common/ScrollToTop";
+
+export default function MainLayout() {
+
+    return (
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
+            <ScrollToTop />
+            <Header />
+            <main>
+                <Outlet />
+            </main>
+            <Footer />
+        </div>
+    );
+}
+EOF
+
+# ── Fix Search.jsx ──
+cat <<'EOF' > src/pages/Search/Search.jsx
+import { useState } from "react";
+import { useLoaderData, useNavigation } from "react-router";
+import Loading from "../../components/ui/Loading";
+import Error from "../../components/ui/Error";
+import Empty from "../../components/ui/Empty";
+import SearchHeader from "./components/SearchHeader";
+import SearchResultsGrid from "./components/SearchResultsGrid";
+
+export default function Search() {
+
+    const { query, results, error } = useLoaderData();
+    const navigation = useNavigation();
+    const [sort, setSort] = useState("");
+
+    const loading = navigation.state === "loading" || navigation.state === "submitting";
+
+    const handleChangeSort = (value) => {
+        if (!value) return;
+        setSort(value);
+    };
+
+    return (
+        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
+            <main className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10">
+                
+                <SearchHeader
+                    query={query}
+                    loading={loading}
+                    onChangeSort={handleChangeSort}
+                />
+
+                {loading && (
+                    <div className="py-16 sm:py-20">
+                        <Loading text="Searching..." />
+                    </div>
+                )}
+
+                {!loading && !error && results.length > 0 && (
+                    <SearchResultsGrid results={results} sort={sort} />
+                )}
+
+                {error && (
+                    <div className="py-16 sm:py-20">
+                        <Error message={error} />
+                    </div>
+                )}
+
+                {!loading && !error && results.length === 0 && query && (
+                    <div className="py-16 sm:py-20">
+                        <Empty message={`No manga found for "${query}".`} />
+                    </div>
+                )}
+
+                {!loading && !error && !query && (
+                    <div className="py-16 sm:py-20">
+                        <Empty message="Enter a search term to find manga." />
+                    </div>
+                )}
+                
+            </main>
+        </div>
+    );
+}
+EOF
+
+# ── Fix api.js (remove duplicate comment) ──
+cat <<'EOF' > src/lib/api.js
+import axios from "axios";
+
+const api = axios.create({
+    baseURL: "https://api.jikan.moe/v4",
+});
+
+/**
+ * Fetches top manga with pagination.
+ */
+export async function getTopManga(page = 1) {
+    const res = await api.get(`/top/manga?page=${page}`);
+    return res.data;
+}
+
+/**
+ * Searches manga by query string.
+ */
+export async function searchManga(query, options = {}) {
+    const res = await api.get(`/manga?q=${query}`, { signal: options.signal });
+    return res.data;
+}
+
+/**
+ * Retrieves a single manga by its MAL id.
+ */
+export async function getMangaById(id) {
+    const res = await api.get(`/manga/${id}`);
+    return res.data;
+}
+
+/**
+ * Fetches user reviews for a manga.
+ * Returns an empty array if the upstream server fails.
+ */
+export async function getMangaReviews(mangaId) {
+    try {
+        const res = await api.get(`/manga/${mangaId}/reviews`);
+        return res.data;
+    } catch (error) {
+        console.warn(`Could not fetch reviews for manga ${mangaId}:`, error.message);
+        return { data: [] };
+    }
+}
+
+/**
+ * Utility to sleep for a given duration (ms).
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Searches for a manga by exact title with built‑in retry on 429 errors.
+ * Retries up to 3 times with increasing delays.
+ */
+export async function searchMangaByTitle(title) {
+    const maxRetries = 3;
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+        try {
+            const response = await api.get(`/manga?q=${encodeURIComponent(title)}&limit=1`);
+            if (response.data.data && response.data.data.length > 0) {
+                const manga = response.data.data[0];
+                return {
+                    found: true,
+                    id: manga.mal_id,
+                    title: manga.title,
+                    url: `/manga/${manga.mal_id}`,
+                };
+            }
+            return { found: false };
+        } catch (error) {
+            if (error.response?.status === 429) {
+                attempt++;
+                if (attempt < maxRetries) {
+                    const delay = 1000 * Math.pow(2, attempt - 1);
+                    console.warn(`Rate limited (429). Retrying in ${delay / 1000}s...`);
+                    await sleep(delay);
+                } else {
+                    console.error("Jikan rate limit exceeded after retries.");
+                    return { found: false };
+                }
+            } else {
+                console.error("Jikan search error:", error);
+                return { found: false };
+            }
+        }
+    }
+}
+
+/**
+ * Fetches manga recommendations for a given manga.
+ * Returns an empty array on failure.
+ */
+export async function getMangaRecommendations(mangaId) {
+    try {
+        const res = await api.get(`/manga/${mangaId}/recommendations`);
+        return res.data;
+    } catch (error) {
+        console.warn(`Could not fetch recommendations for manga ${mangaId}:`, error.message);
+        return { data: [] };
+    }
+}
+EOF
+
+# ── Fix ReviewHeader.jsx: remove FaComments import ──
+sed -i "s/import { FaComments, FaRobot, FaSpinner, FaEye, FaEyeSlash } from \"react-icons\/fa\";/import { FaRobot, FaSpinner, FaEye, FaEyeSlash } from \"react-icons\/fa\";/" src/pages/MangaDetails/components/ReviewsSection/ReviewHeader.jsx
+
+# ── Remove Persian comment from AppRouter.jsx ──
+sed -i "s/import AISearch from \"..\/pages\/AISearch\/AISearch\"; \/\/ وارد کردن صفحه جدید/import AISearch from \"..\/pages\/AISearch\/AISearch\";/" src/router/AppRouter.jsx
+
+# ── Remove inline <style> from HeroBanner.jsx (the whole <style> block) ──
+# We'll delete lines containing <style> and up to </style>
+sed -i '/^            <style>/,/^            <\/style>/d' src/pages/Home/components/Hero/HeroBanner.jsx
+
+echo "✅ All fixes applied successfully."
