@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigation } from "react-router";
+import { useSearchParams, useLocation, useNavigate } from "react-router";
 import { askAi } from "../../lib/ai/askAi";
 import { buildAISearchPrompt } from "../../lib/ai/prompts";
 import { searchManga } from "../../lib/api";
@@ -11,16 +11,20 @@ import Empty from "../../components/ui/Empty";
 export default function AISearch() {
 
     const [searchParams] = useSearchParams();
-    const navigation = useNavigation();
+    const location = useLocation();
+    const navigate = useNavigate();
     const query = searchParams.get("q") || "";
-    const loading = navigation.state === "loading" || navigation.state === "submitting";
+    const fresh = location.state?.fresh === true;
+
     const [mangas, setMangas] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
 
         if (!query) {
             setError("No search query provided.");
+            setLoading(false);
             return;
         }
 
@@ -59,7 +63,10 @@ export default function AISearch() {
             } catch (err) {
                 console.error(err);
                 setError("Failed to get AI recommendations. Please try again.");
+            } finally {
+                setLoading(false);
             }
+
         };
 
         fetchAISuggestions();

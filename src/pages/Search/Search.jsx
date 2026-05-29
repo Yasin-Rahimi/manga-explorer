@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router";
 import Loading from "../../components/ui/Loading";
 import Error from "../../components/ui/Error";
@@ -13,6 +13,17 @@ export default function Search() {
     const [sort, setSort] = useState("");
 
     const loading = navigation.state === "loading" || navigation.state === "submitting";
+
+    const sortResult = useMemo(() => {
+        if (!sort) return [];
+        const list = [...results];
+
+        if (sort === "rate") {
+            return list.sort((m1, m2) => (m2.score ?? 0) - (m1.score ?? 0));
+        }
+
+        return list.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
+    }, [results, sort]);
 
     const handleChangeSort = (value) => {
         if (!value) return;
@@ -29,14 +40,14 @@ export default function Search() {
                     onChangeSort={handleChangeSort}
                 />
 
+                {!loading && !error && results.length > 0 && (
+                    <SearchResultsGrid results={results} sort={sort} />
+                )}
+
                 {loading && (
                     <div className="py-16 sm:py-20">
                         <Loading text="Searching..." />
                     </div>
-                )}
-
-                {!loading && !error && results.length > 0 && (
-                    <SearchResultsGrid results={results} sort={sort} />
                 )}
 
                 {error && (

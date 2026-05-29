@@ -30,6 +30,9 @@ export async function getMangaById(id) {
 
 /**
  * Fetches user reviews for a manga.
+ */
+/**
+ * Fetches user reviews for a manga.
  * Returns an empty array if the upstream server fails.
  */
 export async function getMangaReviews(mangaId) {
@@ -37,11 +40,12 @@ export async function getMangaReviews(mangaId) {
         const res = await api.get(`/manga/${mangaId}/reviews`);
         return res.data;
     } catch (error) {
+        // The upstream MyAnimeList server sometimes returns 500.
+        // Log it but don't break the whole page.
         console.warn(`Could not fetch reviews for manga ${mangaId}:`, error.message);
-        return { data: [] };
+        return { data: [] }; // fallback to an empty review list
     }
 }
-
 /**
  * Utility to sleep for a given duration (ms).
  */
@@ -74,6 +78,7 @@ export async function searchMangaByTitle(title) {
             if (error.response?.status === 429) {
                 attempt++;
                 if (attempt < maxRetries) {
+                    // Exponential backoff: 1s, 2s, 4s
                     const delay = 1000 * Math.pow(2, attempt - 1);
                     console.warn(`Rate limited (429). Retrying in ${delay / 1000}s...`);
                     await sleep(delay);
@@ -88,6 +93,7 @@ export async function searchMangaByTitle(title) {
         }
     }
 }
+
 
 /**
  * Fetches manga recommendations for a given manga.

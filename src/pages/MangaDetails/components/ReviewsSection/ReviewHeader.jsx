@@ -1,4 +1,4 @@
-import { FaRobot, FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaComments, FaRobot, FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function ReviewHeader({ 
     onSummarize, 
