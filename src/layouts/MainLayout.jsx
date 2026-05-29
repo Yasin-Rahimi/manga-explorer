@@ -25,7 +25,7 @@ export default function MainLayout() {
     };
 
     return (
-        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white">
+        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white">
             <ScrollToTop />
             <Header
                 query={query}
