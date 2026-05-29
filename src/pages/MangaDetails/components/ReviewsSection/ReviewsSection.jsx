@@ -1,4 +1,3 @@
-// src/pages/MangaDetails/components/ReviewsSection/ReviewsSection.jsx
 import { useState } from "react";
 import { askAi } from "../../../../lib/ai/askAi";
 import { buildReviewSummaryPrompt } from "../../../../lib/ai/prompts";
@@ -7,6 +6,7 @@ import AISummary from "./AISummary";
 import ReviewList from "./ReviewList";
 
 export default function ReviewsSection({ mangaTitle, reviews }) {
+
     const [summary, setSummary] = useState(null);
     const [loadingSummary, setLoadingSummary] = useState(false);
     const [summaryError, setSummaryError] = useState(null);
@@ -26,9 +26,11 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
     };
 
     const handleSummarize = async () => {
+
         if (loadingSummary) return;
         setLoadingSummary(true);
         setSummaryError(null);
+
         try {
             const reviewsText = reviews
                 .slice(0, 10)
@@ -48,6 +50,7 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
         } finally {
             setLoadingSummary(false);
         }
+
     };
 
     const handleToggleSummary = () => {
@@ -55,7 +58,9 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
     };
 
     return (
+        
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+            
             <ReviewHeader 
                 onSummarize={handleSummarize} 
                 isLoading={loadingSummary}
@@ -73,6 +78,8 @@ export default function ReviewsSection({ mangaTitle, reviews }) {
                 expandedComments={expandedComments} 
                 onToggleExpand={toggleExpand} 
             />
+            
         </div>
+
     );
 }

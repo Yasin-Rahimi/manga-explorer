@@ -16,6 +16,7 @@ export default function TrendingSection({
     keyboardMode,
     setKeyboardMode
 }) {
+
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(-1);
     const cardRefs = useRef([]);
@@ -28,11 +29,12 @@ export default function TrendingSection({
         setActiveIndex(-1);
     }, [trending]);
 
-    // ناوبری با کیبورد فقط در حالت trending
     useEffect(() => {
+
         if (keyboardMode !== 'trending') return;
 
         const handleKeyDown = (e) => {
+
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             const total = trending.length;
             if (total === 0) return;
@@ -54,7 +56,6 @@ export default function TrendingSection({
                     if (newIndex >= total) newIndex = activeIndex;
                     break;
                 case 'ArrowUp':
-                    // اگر در ردیف اول هستیم و کلید بالا زده شد، به حالت hero برگرد
                     if (activeIndex < cols) {
                         e.preventDefault();
                         setKeyboardMode('hero');
@@ -79,21 +80,25 @@ export default function TrendingSection({
                 setActiveIndex(newIndex);
                 cardRefs.current[newIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
         };
 
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
+
     }, [activeIndex, trending, navigate, keyboardMode, setKeyboardMode]);
 
-    // کلیک روی کارت‌ها حالت را به trending تغییر دهد
     useEffect(() => {
+
         const handleClick = (e) => {
             if (e.target.closest('.manga-card-container') && keyboardMode !== 'trending') {
                 setKeyboardMode('trending');
             }
         };
+
         document.addEventListener('click', handleClick);
         return () => document.removeEventListener('click', handleClick);
+
     }, [keyboardMode, setKeyboardMode]);
 
     if (!loading && !error && trending.length === 0) {
@@ -101,8 +106,10 @@ export default function TrendingSection({
     }
 
     return (
+
         <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6 overflow-hidden">
-            {trending.length > 0 && (
+            {
+            trending.length > 0 && (
                 <h2 className="mb-5 sm:mb-6 text-xl sm:text-2xl md:text-3xl font-bold">
                     Trend Mangas
                 </h2>
@@ -129,7 +136,10 @@ export default function TrendingSection({
             )}
 
             {loading && <Loading text="Loading trending manga..." />}
+            
             {error && <Error message={error} />}
+
         </section>
+
     );
 }

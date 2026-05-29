@@ -9,9 +9,10 @@ const client = new OpenAI({
 });
 
 export async function identifyMangaFromImage(base64Image, mimeType = "image/png") {
+    
     const dataUrl = `data:${mimeType};base64,${base64Image}`;
-
     let gptResponse;
+
     try {
         gptResponse = await client.chat.completions.create({
             model: "gpt-4o",
@@ -39,6 +40,7 @@ export async function identifyMangaFromImage(base64Image, mimeType = "image/png"
     const alternativeGuesses = lines.slice(1, 4);
 
     let primaryResult = { found: false, id: null, url: null, title: primaryGuess };
+
     try {
         const searchResult = await searchMangaByTitle(primaryGuess);
         if (searchResult.found) {
@@ -49,7 +51,9 @@ export async function identifyMangaFromImage(base64Image, mimeType = "image/png"
     }
 
     const alternativeMatches = [];
+
     for (const guess of alternativeGuesses) {
+
         try {
             const res = await searchMangaByTitle(guess);
             if (res.found) {
@@ -61,7 +65,9 @@ export async function identifyMangaFromImage(base64Image, mimeType = "image/png"
             console.error(`Jikan search failed for alternative guess "${guess}":`, err);
             alternativeMatches.push({ title: guess, found: false });
         }
+
         await new Promise(resolve => setTimeout(resolve, 500));
+        
     }
 
     return { primaryGuess: primaryResult, alternativeGuesses: alternativeMatches };

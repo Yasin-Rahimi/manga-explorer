@@ -1,11 +1,9 @@
 @import "tailwindcss";
 
-/* Hero banner progress animation */
 @keyframes banner-progress {
     from {
         width: 0%;
     }
-
     to {
         width: 100%;
     }
@@ -77,7 +75,6 @@
     animation: slide-in-right 0.3s ease-out;
 }
 
-/* اضافه کردن به انتهای فایل index.css */
 @keyframes shimmer {
     0% {
         background-position: 0% 50%;

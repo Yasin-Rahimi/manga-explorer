@@ -5,6 +5,7 @@ export default function SuggestionsDropdown({
     onMouseEnter,
     isLoading = false
 }) {
+
     if (isLoading) {
         return (
             <ul className="absolute left-0 right-0 top-full mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl shadow-lg z-50 overflow-y-auto">
@@ -25,7 +26,9 @@ export default function SuggestionsDropdown({
 
     return (
         <ul className="absolute left-0 right-0 top-full mt-2 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
+            
             {suggestions.map((manga, idx) => (
+                
                 <li
                     key={idx}
                     onClick={() => onSuggestionClick(manga)}
@@ -36,7 +39,7 @@ export default function SuggestionsDropdown({
                             : "hover:bg-purple-600/40"
                     }`}
                 >
-                    {/* فقط اگر آیتم سفارشی (isCustom) نبود، تصویر نشان بده */}
+
                     {!manga.isCustom && (
                         <img
                             src={manga.images?.jpg?.small_image_url || manga.images?.jpg?.image_url}
@@ -44,11 +47,14 @@ export default function SuggestionsDropdown({
                             className="w-8 h-8 object-cover rounded"
                         />
                     )}
-                    {/* اگر آیتم سفارشی بود، یک placeholder خالی برای حفظ تراز قرار می‌دهیم */}
+
                     {manga.isCustom && <div className="w-8 h-8"></div>}
+
                     <span>{manga.title}</span>
+
                 </li>
             ))}
         </ul>
+
     );
 }

@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router"; // <-- اضافه کردن useNavigate
+import { useNavigate } from "react-router";
 import MangaCard from "../../../components/common/MangaCard";
 
 export default function SearchResultsGrid({ results, sort }) {
-    const navigate = useNavigate(); // <-- تعریف navigate
+
+    const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(-1);
     const cardRefs = useRef([]);
 
@@ -12,6 +13,7 @@ export default function SearchResultsGrid({ results, sort }) {
     }, [results]);
 
     useEffect(() => {
+
         const handleKeyDown = (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
@@ -59,19 +61,20 @@ export default function SearchResultsGrid({ results, sort }) {
                     });
                 }
             }
+
         };
 
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
+
     }, [activeIndex, results, navigate]);
 
-    // بازنشانی activeIndex هنگام تغییر results
     useEffect(() => {
         setActiveIndex(-1);
     }, [results]);
 
-    // مرتب‌سازی نتایج بر اساس sort
     let sortedResults = [...results];
+
     if (sort === 'rate') {
         sortedResults.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
     } else if (sort === 'az') {
@@ -82,6 +85,7 @@ export default function SearchResultsGrid({ results, sort }) {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            
             {sortedResults.map((manga, index) => (
                 <div
                     key={index}
@@ -93,6 +97,7 @@ export default function SearchResultsGrid({ results, sort }) {
                     <MangaCard manga={manga} />
                 </div>
             ))}
+
         </div>
     );
 }

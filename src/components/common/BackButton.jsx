@@ -1,11 +1,12 @@
-// src/components/common/BackButton.jsx
 import { useNavigate } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function BackButton() {
+
     const navigate = useNavigate();
 
     return (
+
         <button
             onClick={() => {
                 if (window.history.length > 1) {
@@ -27,8 +28,12 @@ export default function BackButton() {
             "
             aria-label="Go back"
         >
+
             <FaArrowLeft className="w-3 h-3 sm:w-5 sm:h-5" />
+
             <span className="hidden sm:inline">Back</span>
+            
         </button>
+
     );
 }

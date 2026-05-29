@@ -1,8 +1,8 @@
-// src/pages/MangaDetails/components/ReviewsSection/ReviewList.jsx
 import ReviewItem from "./ReviewItem";
 
 export default function ReviewList({ reviews, expandedComments, onToggleExpand }) {
     return (
+
         <div className="space-y-4">
             {reviews.map((review, idx) => (
                 <ReviewItem
@@ -14,5 +14,6 @@ export default function ReviewList({ reviews, expandedComments, onToggleExpand }
                 />
             ))}
         </div>
+        
     );
 }

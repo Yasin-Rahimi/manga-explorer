@@ -7,6 +7,7 @@ import SearchHeader from "./components/SearchHeader";
 import SearchResultsGrid from "./components/SearchResultsGrid";
 
 export default function Search() {
+
     const { query, results, error } = useLoaderData();
     const navigation = useNavigation();
     const [sort, setSort] = useState("");
@@ -16,9 +17,11 @@ export default function Search() {
     const sortResult = useMemo(() => {
         if (!sort) return [];
         const list = [...results];
+
         if (sort === "rate") {
             return list.sort((m1, m2) => (m2.score ?? 0) - (m1.score ?? 0));
         }
+
         return list.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
     }, [results, sort]);
 
@@ -30,6 +33,7 @@ export default function Search() {
     return (
         <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white flex flex-col">
             <main className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10">
+                
                 <SearchHeader
                     query={query}
                     loading={loading}
@@ -63,6 +67,7 @@ export default function Search() {
                         <Empty message="Enter a search term to find manga." />
                     </div>
                 )}
+                
             </main>
         </div>
     );

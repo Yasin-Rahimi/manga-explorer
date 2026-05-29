@@ -1,10 +1,8 @@
-export default function Pagination({
-    page,
-    setPage,
-    lastPage
-}) {
+export default function Pagination({ page, setPage, lastPage}) {
     return (
+
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full px-4">
+
             <button
                 onClick={() => setPage((p) => Math.max(p - 1, 1))}
                 disabled={page === 1}
@@ -24,6 +22,8 @@ export default function Pagination({
             >
                 Next
             </button>
+            
         </div>
+
     );
 }

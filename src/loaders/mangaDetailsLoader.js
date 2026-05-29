@@ -7,5 +7,6 @@ export async function mangaDetailsLoader({ params }) {
     } catch {
         return { manga: null };
     }
+
 }
 

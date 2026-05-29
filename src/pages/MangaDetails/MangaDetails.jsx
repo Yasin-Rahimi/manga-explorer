@@ -1,4 +1,3 @@
-// src/pages/MangaDetails/MangaDetails.jsx
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
 import { getMangaReviews, getMangaRecommendations } from "../../lib/api";
@@ -14,6 +13,7 @@ import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 import RecommendationsSection from "./components/RecommendationsSection";
 
 export default function MangaDetails() {
+
     const { manga } = useLoaderData();
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
@@ -64,13 +64,18 @@ export default function MangaDetails() {
     const originalSynopsis = manga.synopsis || "No description available.";
 
     return (
+
         <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
+
             <MangaBackground imageUrl={coverImageUrl} />
-            <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+
+            <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">   
                 <div className="mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
                     <div className="lg:col-span-4 flex flex-col items-center lg:items-start">
                         <MangaCover imageUrl={coverImageUrl} title={manga.title} status={manga.status} />
                     </div>
+
                     <div className="lg:col-span-8 flex flex-col gap-5 sm:gap-6 min-w-0">
                         <MangaTitleSection title={manga.title} titleJapanese={manga.title_japanese} />
                         <MangaStatsCards score={manga.score} rank={manga.rank} popularity={manga.popularity} />
@@ -86,44 +91,52 @@ export default function MangaDetails() {
                         {!reviewsLoading && !reviewsError && reviews.length > 0 && (
                             <ReviewsSection mangaTitle={manga.title} reviews={reviews} />
                         )}
+
                         {!reviewsLoading && !reviewsError && reviews.length === 0 && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 No reviews available for this manga.
                             </div>
                         )}
+
                         {reviewsLoading && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 Loading reviews...
                             </div>
                         )}
+
                         {reviewsError && (
                             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
                                 {reviewsError}
                             </div>
                         )}
 
-                        {/* بخش پیشنهادها */}
                         {!recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
                             <RecommendationsSection recommendations={recommendations} />
                         )}
+
                         {!recommendationsLoading && !recommendationsError && recommendations.length === 0 && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 No recommendations available for this manga.
                             </div>
                         )}
+
                         {recommendationsLoading && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 Loading recommendations...
                             </div>
                         )}
+
                         {recommendationsError && (
                             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
                                 {recommendationsError}
                             </div>
                         )}
+
                     </div>
+                    
                 </div>
             </main>
+
         </div>
     );
 }

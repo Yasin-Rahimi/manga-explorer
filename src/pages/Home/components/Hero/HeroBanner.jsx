@@ -1,4 +1,3 @@
-// src/pages/Home/components/Hero/HeroBanner.jsx
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import HeroSlide from "./HeroSlide";
@@ -7,6 +6,7 @@ import HeroIndicators from "./HeroIndicators";
 import HeroProgressBar from "./HeroProgressBar";
 
 export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
+
     const navigate = useNavigate();
     const visibleMangas = mangas.slice(0, 5);
     const [current, setCurrent] = useState(0);
@@ -41,11 +41,11 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
         touchEndX.current = 0;
     };
 
-    // فقط در حالت hero به کلیدها پاسخ بده
     useEffect(() => {
         if (keyboardMode !== 'hero') return;
+
         const handleKeyDown = (e) => {
-            // اگر کاربر داخل یک فیلد ورودی است، هیچ کاری نکن
+
             if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
                 return;
             }
@@ -58,20 +58,20 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
                 const index = parseInt(e.key) - 1;
                 if (index < visibleMangas.length) setCurrent(index);
             }
-            // کلید Enter حذف شد - دیگر هیچ عملی انجام نمی‌دهد
+
         };
+
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
+
     }, [keyboardMode, visibleMangas, current, navigate, prevSlide, nextSlide]);
 
-    // اسلاید خودکار
     useEffect(() => {
         if (!visibleMangas.length) return;
         const interval = setInterval(nextSlide, 8000);
         return () => clearInterval(interval);
     }, [visibleMangas.length, nextSlide]);
 
-    // با کلیک روی بنر حالت را hero کن
     useEffect(() => {
         const handleClick = () => {
             if (keyboardMode !== 'hero') setKeyboardMode('hero');
@@ -83,34 +83,30 @@ export default function HeroBanner({ mangas, keyboardMode, setKeyboardMode }) {
     if (!visibleMangas.length) return null;
 
     return (
+
         <div
             className="relative w-full h-112.5 sm:h-87.5 md:h-102.5 lg:h-112.5 xl:h-122.5 2xl:h-132.5 rounded-2xl sm:rounded-3xl xl:rounded-4xl overflow-hidden shadow-2xl shadow-purple-900/20 border border-white/5 bg-[#0f0f11] group"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            <style>{`
-                @keyframes banner-progress {
-                    0% { width: 0%; }
-                    100% { width: 100%; }
-                }
-                .animate-banner-progress {
-                    animation: banner-progress 8s linear forwards;
-                }
-            `}</style>
 
             <div
                 className="flex h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 style={{ transform: `translateX(-${current * 100}%)` }}
             >
+
                 {visibleMangas.map((manga) => (
                     <HeroSlide key={manga.mal_id} manga={manga} />
                 ))}
+
             </div>
 
             <HeroNavigation onPrev={prevSlide} onNext={nextSlide} />
             <HeroIndicators total={visibleMangas.length} current={current} onSelect={setCurrent} />
             <HeroProgressBar keyValue={current} />
+
         </div>
+
     );
 }

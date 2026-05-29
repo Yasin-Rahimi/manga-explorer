@@ -4,6 +4,7 @@ import { searchManga } from "../lib/api";
 const ERROR_MESSAGE = "Failed to search manga.";
 
 export async function searchLoader({ request }) {
+
     const url = new URL(request.url);
     const query = url.searchParams.get("q") || "";
 
@@ -17,6 +18,7 @@ export async function searchLoader({ request }) {
     } catch {
         return { query, results: [], error: ERROR_MESSAGE };
     }
+    
 }
 
 export async function searchAction({ request }) {

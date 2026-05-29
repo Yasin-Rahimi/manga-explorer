@@ -1,9 +1,10 @@
-// src/pages/ImageSearch/components/ImageUploadControls.jsx
 import { FaUpload, FaSpinner } from 'react-icons/fa';
 
 export default function ImageUploadControls({ onIdentify, onClear, hasImage, isLoading, label = "Identify Manga" }) {
     return (
+
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-3 mt-5 sm:mt-6">
+            
             <button
                 onClick={onIdentify}
                 disabled={!hasImage || isLoading}
@@ -12,6 +13,7 @@ export default function ImageUploadControls({ onIdentify, onClear, hasImage, isL
                 {isLoading ? <FaSpinner className="animate-spin" /> : <FaUpload />}
                 {isLoading ? 'Identifying...' : label}
             </button>
+
             {hasImage && (
                 <button
                     onClick={onClear}
@@ -20,6 +22,8 @@ export default function ImageUploadControls({ onIdentify, onClear, hasImage, isL
                     Clear
                 </button>
             )}
+            
         </div>
+
     );
 }

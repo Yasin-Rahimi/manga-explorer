@@ -5,6 +5,7 @@ export default function SearchHeader({ query, loading, onChangeSort }) {
     if (!query || loading) return null;
 
     return (
+
         <div className="
             mb-6 sm:mb-8
             flex flex-col sm:flex-row
@@ -12,6 +13,7 @@ export default function SearchHeader({ query, loading, onChangeSort }) {
             gap-4 sm:gap-0
             w-full
         ">
+
             <h1 className="
                 flex items-start sm:items-center
                 gap-2
@@ -29,6 +31,7 @@ export default function SearchHeader({ query, loading, onChangeSort }) {
                         "{query}"
                     </span>
                 </span>
+
             </h1>
 
             <div className="
@@ -37,6 +40,7 @@ export default function SearchHeader({ query, loading, onChangeSort }) {
             ">
                 <FilterButton field="sort" onChangeSort={onChangeSort} />
             </div>
+            
         </div>
     );
 }

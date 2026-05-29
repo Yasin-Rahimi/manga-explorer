@@ -1,9 +1,9 @@
-// src/pages/ImageSearch/components/ImageDropzone.jsx
 import { FaImage } from 'react-icons/fa';
 import ImagePreview from './ImagePreview';
 
 export default function ImageDropzone({ previewUrl, onClear, onClick }) {
     return (
+
         <div
             className="border-2 border-dashed border-gray-500 rounded-xl p-5 sm:p-6 text-center cursor-pointer hover:border-purple-400 transition-colors duration-200"
             onClick={onClick}
@@ -18,5 +18,6 @@ export default function ImageDropzone({ previewUrl, onClear, onClick }) {
                 </div>
             )}
         </div>
+
     );
 }

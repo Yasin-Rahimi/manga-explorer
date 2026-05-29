@@ -1,8 +1,11 @@
 export default function MangaGenres({ genres }) {
+    
     if (!genres || genres.length === 0) return null;
 
     return (
+        
         <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+            
             {genres.map((g) => (
                 <span
                     key={g.mal_id}
@@ -11,6 +14,7 @@ export default function MangaGenres({ genres }) {
                     {g.name}
                 </span>
             ))}
+
         </div>
     );
 }

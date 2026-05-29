@@ -1,6 +1,8 @@
 export default function HeroIndicators({ total, current, onSelect }) {
     return (
+
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 hidden sm:flex items-center gap-2">
+
             {Array.from({ length: total }).map((_, index) => (
                 <button
                     key={index}
@@ -15,6 +17,8 @@ export default function HeroIndicators({ total, current, onSelect }) {
                     }`}
                 />
             ))}
+
         </div>
+
     );
 }

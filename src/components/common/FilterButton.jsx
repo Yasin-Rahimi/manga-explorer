@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaSort, FaStar, FaFont } from "react-icons/fa";
 
 export default function FilterButton({ field, onChangeSort }) {
+
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLabel, setSelectedLabel] = useState("Sort");
 
@@ -29,7 +30,9 @@ export default function FilterButton({ field, onChangeSort }) {
     };
 
     return (
+
         <div className="relative inline-block w-full sm:w-auto">
+           
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="
@@ -50,12 +53,17 @@ export default function FilterButton({ field, onChangeSort }) {
                     min-w-30
                 "
             >
+
                 <FaSort className="w-4 h-4 text-purple-400 shrink-0" />
+
                 <span className="truncate">{selectedLabel}</span>
+
             </button>
 
             {isOpen && (
+
                 <>
+
                     <div
                         className="fixed inset-0 z-10"
                         onClick={() => setIsOpen(false)}
@@ -73,7 +81,8 @@ export default function FilterButton({ field, onChangeSort }) {
                             overflow-hidden
                         "
                     >
-                        {currentOptions.map((opt) => (
+                        
+                        {currentOptions.map((opt) => (     
                             <button
                                 key={opt.value}
                                 onClick={() =>
@@ -89,13 +98,20 @@ export default function FilterButton({ field, onChangeSort }) {
                                     cursor-pointer
                                 "
                             >
+
                                 {opt.icon}
+
                                 <span className="truncate">{opt.label}</span>
+
                             </button>
                         ))}
+
                     </div>
+
                 </>
             )}
+            
         </div>
+
     );
 }
