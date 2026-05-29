@@ -90,7 +90,7 @@ export default function AISearch() {
     if (!loading && mangas.length === 0) return <div className="min-h-screen flex items-center justify-center"><Empty message="No manga found for your description." /></div>;
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-white py-8 px-4">
+        <div className="h-fit bg-linear-to-br from-black via-purple-950 to-black text-white py-8 px-4">
             <div className="max-w-7xl mx-auto">
 
                 {/* عنوان با هایلایت بنفش */}
