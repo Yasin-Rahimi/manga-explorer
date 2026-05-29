@@ -1,3 +1,44 @@
+#!/bin/bash
+
+# ── ساخت فایل .env با مقادیر حساس ──
+cat << 'EOF' > .env
+VITE_AI_API_KEY=8d210f7c-eac0-5c67-a3f0-b61e37f62179
+VITE_AI_VISION_API_KEY=03d710dd-6db5-526c-b607-386d7ce35edf
+VITE_AI_PROXY_TARGET=https://arvancloudai.ir
+VITE_AI_PROXY_PATH=/gateway/models/GPT-4o/SSLCJImpvtAXNeRe7x8F2J9Kuf5ZwAxyYOmBPDffmK4xx6cZ2bTu5unIGM-mmliSyabmlsfsgJIZ2kMuibZB_N2iqJh8WsW_mPlOlYIOPHgJBxMZ1M1NoaGTPKsrHPqu-cHuRGR8UV91Qa-b_fOKluByJTAIG6SC9rM_pOgVMHuqVSq9Wo8qYQyS-UZMJYq-kw0XZAZFCnzgKSqt9dsnZl2AEOc4RCRAyubMx6Q23EbAAw/v1/chat/completions
+EOF
+
+# ── افزودن .env به .gitignore ──
+if [ ! -f .gitignore ]; then
+  touch .gitignore
+fi
+if ! grep -qxF '.env' .gitignore; then
+  echo '.env' >> .gitignore
+fi
+
+# ── بازنویسی askAi.js با کلید از متغیر محیطی ──
+cat << 'EOF' > src/lib/ai/askAi.js
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+    apiKey: import.meta.env.VITE_AI_API_KEY || 'not-needed',
+    dangerouslyAllowBrowser: true,
+    baseURL: 'http://localhost:5173/api/gpt', 
+});
+
+export async function askAi(prompt) {
+    const completion = await client.chat.completions.create({
+        model: 'Qwen3-30B-A3B',
+        messages: [
+            { role: 'user', content: prompt },
+        ],
+    });
+    return completion.choices[0].message.content;
+}
+EOF
+
+# ── بازنویسی gptVision.js با کلید از متغیر محیطی ──
+cat << 'EOF' > src/lib/ai/gptVision.js
 import OpenAI from "openai";
 import { searchMangaByTitle } from "../api";
 
@@ -104,3 +145,32 @@ Do not add any extra text, numbering, or explanation. Just the names, one per li
         alternativeGuesses: alternativeMatches,
     };
 }
+EOF
+
+# ── بازنویسی vite.config.js با خواندن از متغیرهای محیطی ──
+cat << 'EOF' > vite.config.js
+import { defineConfig, loadEnv } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return {
+    plugins: [react(), tailwindcss()],
+    server: {
+      proxy: {
+        '/api/gpt': {
+          target: env.VITE_AI_PROXY_TARGET,
+          changeOrigin: true,
+          rewrite: () => env.VITE_AI_PROXY_PATH,
+          headers: {
+            'Authorization': `Bearer ${env.VITE_AI_API_KEY}`
+          }
+        }
+      }
+    }
+  }
+})
+EOF
+
+echo "✅ امن‌سازی انجام شد. مقادیر حساس به .env منتقل شدند و فایل‌ها به‌روزرسانی شدند."

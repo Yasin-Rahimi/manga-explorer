@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-    apiKey: '8d210f7c-eac0-5c67-a3f0-b61e37f62179',
+    apiKey: import.meta.env.VITE_AI_API_KEY || 'not-needed',
     dangerouslyAllowBrowser: true,
     baseURL: 'http://localhost:5173/api/gpt', 
 });
