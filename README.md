@@ -5,11 +5,11 @@
 
 ## ✨ Features
 
-### 🔍 Normal & AI-Assisted Search
+### 🔍 Normal & AI-Assisted Search (Killer Feature pt-1)
 
 Search manga by title or simply describe your taste, and let AI recommend the perfect manga for you.
 
-### 🖼️ Image Search
+### 🖼️ Image Search (Killer Feature pt-2)
 
 Upload a manga panel, cover, or anime screenshot to:
 
