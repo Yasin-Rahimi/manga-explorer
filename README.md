@@ -5,11 +5,11 @@
 
 ## ✨ Features
 
-### 🔍 Normal & AI-Assisted Search
+### 🔍 Normal & AI-Assisted Search (Killer Feature pt-1)
 
 Search manga by title or simply describe your taste, and let AI recommend the perfect manga for you.
 
-### 🖼️ Image Search
+### 🖼️ Image Search (Killer Feature pt-2)
 
 Upload a manga panel, cover, or anime screenshot to:
 
@@ -85,8 +85,7 @@ Before running the project, make sure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/manga-lens.git
-cd manga-lens
+git clone https://github.com/Yasin-Rahimi/manga-explorer.git
 ```
 
 ### 2. Install Dependencies
