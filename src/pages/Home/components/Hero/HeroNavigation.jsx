@@ -9,7 +9,7 @@ export default function HeroNavigation({ onPrev, onNext }) {
                 onClick={(e) => { e.stopPropagation(); onPrev(); }}
                 className="pointer-events-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white transition-all duration-300 cursor-pointer hover:scale-110"
             >
-                <FaChevronLeft className="w-5 h-5" />
+                <FaChevronLeft className="w-4 h-4" />
             </button>
 
             <button

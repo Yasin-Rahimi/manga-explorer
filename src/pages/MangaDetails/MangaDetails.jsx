@@ -65,7 +65,7 @@ export default function MangaDetails() {
 
     return (
 
-        <div className="min-h-screen bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
+        <div className="bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
 
             <MangaBackground imageUrl={coverImageUrl} />
 

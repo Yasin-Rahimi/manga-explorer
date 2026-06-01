@@ -79,7 +79,7 @@ export default function Search() {
     // Empty state when no query entered
     if (!loading && results.length === 0 && !query) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-fit flex items-center justify-center">
                 <Empty message="Enter a search term to find manga." />
             </div>
         );
