@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const ctrl = require('../controllers/mangaController');
+const { validate } = require('../middleware/validateRequest');
+const cache = require('../cache/cacheMiddleware');
+const config = require('../config');
+const sk = req=>`cache:${req.originalUrl}`;
+const mk = req=>`cache:manga:${req.params.id}`;
+const ck = req=>`cache:chapters:${req.params.id}:${JSON.stringify(req.query)}`;
+router.get('/search', validate('searchQuery'), cache(sk,config.cacheTTL.search), ctrl.search);
+router.get('/:id', validate('mangaId','params'), cache(mk,config.cacheTTL.manga), ctrl.getManga);
+router.get('/:id/chapters', validate('mangaId','params'), validate('chaptersQuery'), cache(ck,config.cacheTTL.chapters), ctrl.getChapters);
+module.exports = router;

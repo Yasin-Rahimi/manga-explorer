@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { getMangaReviews, getMangaRecommendations } from "../../lib/api";
+import { getMangaDexIdByTitle } from "../../lib/mangaReaderApi";
 import MangaBackground from "./components/MangaBackground";
 import MangaCover from "./components/MangaCover";
 import MangaTitleSection from "./components/MangaTitleSection";
@@ -13,14 +14,19 @@ import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 import RecommendationsSection from "./components/RecommendationsSection";
 
 export default function MangaDetails() {
-
     const { manga } = useLoaderData();
+    const navigate = useNavigate();
+
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [reviewsError, setReviewsError] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
     const [recommendationsLoading, setRecommendationsLoading] = useState(true);
     const [recommendationsError, setRecommendationsError] = useState(null);
+
+    // Reader button states
+    const [loadingReader, setLoadingReader] = useState(false);
+    const [readerError, setReaderError] = useState(null);
 
     useEffect(() => {
         if (!manga) return;
@@ -56,6 +62,19 @@ export default function MangaDetails() {
         fetchRecommendations();
     }, [manga]);
 
+    const handleReadManga = async () => {
+        setLoadingReader(true);
+        setReaderError(null);
+        try {
+            const mangadexId = await getMangaDexIdByTitle(manga.title);
+            navigate(`/manga/${mangadexId}/read`);
+        } catch (err) {
+            setReaderError(err.message);
+        } finally {
+            setLoadingReader(false);
+        }
+    };
+
     if (!manga) return <MangaDetailsNotFound />;
 
     const coverImageUrl = manga.images?.jpg?.large_image_url || manga.images?.jpg?.image_url;
@@ -64,14 +83,10 @@ export default function MangaDetails() {
     const originalSynopsis = manga.synopsis || "No description available.";
 
     return (
-
         <div className="bg-linear-to-br from-black via-purple-950 to-black text-gray-100 flex flex-col selection:bg-purple-600 selection:text-white">
-
             <MangaBackground imageUrl={coverImageUrl} />
-
-            <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">   
+            <main className="relative z-10 grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
                 <div className="mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-
                     <div className="lg:col-span-4 flex flex-col items-center lg:items-start">
                         <MangaCover imageUrl={coverImageUrl} title={manga.title} status={manga.status} />
                     </div>
@@ -79,6 +94,27 @@ export default function MangaDetails() {
                     <div className="lg:col-span-8 flex flex-col gap-5 sm:gap-6 min-w-0">
                         <MangaTitleSection title={manga.title} titleJapanese={manga.title_japanese} />
                         <MangaStatsCards score={manga.score} rank={manga.rank} popularity={manga.popularity} />
+
+                        {/* ---- READ MANGA BUTTON ---- */}
+                        {!loadingReader ? (
+                            <button
+                                onClick={handleReadManga}
+                                className="flex items-center justify-center gap-2 w-full sm:w-fit px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold text-white transition shadow-lg shadow-purple-600/30"
+                            >
+                                📖 Read Manga
+                            </button>
+                        ) : (
+                            <button
+                                disabled
+                                className="flex items-center justify-center gap-2 w-full sm:w-fit px-6 py-3 bg-gray-700 rounded-xl font-bold text-white/70"
+                            >
+                                <span className="inline-block animate-spin">⏳</span> Searching MangaDex...
+                            </button>
+                        )}
+                        {readerError && (
+                            <p className="text-red-400 text-sm mt-1">{readerError}</p>
+                        )}
+
                         <MangaGenres genres={manga.genres} />
                         <MangaMetaPanel
                             chapters={manga.chapters}
@@ -91,19 +127,16 @@ export default function MangaDetails() {
                         {!reviewsLoading && !reviewsError && reviews.length > 0 && (
                             <ReviewsSection mangaTitle={manga.title} reviews={reviews} />
                         )}
-
                         {!reviewsLoading && !reviewsError && reviews.length === 0 && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 No reviews available for this manga.
                             </div>
                         )}
-
                         {reviewsLoading && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 Loading reviews...
                             </div>
                         )}
-
                         {reviewsError && (
                             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
                                 {reviewsError}
@@ -113,30 +146,24 @@ export default function MangaDetails() {
                         {!recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
                             <RecommendationsSection recommendations={recommendations} />
                         )}
-
                         {!recommendationsLoading && !recommendationsError && recommendations.length === 0 && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 No recommendations available for this manga.
                             </div>
                         )}
-
                         {recommendationsLoading && (
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-gray-400">
                                 Loading recommendations...
                             </div>
                         )}
-
                         {recommendationsError && (
                             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-300">
                                 {recommendationsError}
                             </div>
                         )}
-
                     </div>
-                    
                 </div>
             </main>
-
         </div>
     );
 }
