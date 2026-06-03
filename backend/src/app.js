@@ -1,3 +1,13 @@
+// Proxy global for fetch (used by mangadex-full-api)
+const { ProxyAgent, setGlobalDispatcher } = require('undici');
+const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY || 'http://127.0.0.1:10809';
+if (proxyUrl) {
+    setGlobalDispatcher(new ProxyAgent(proxyUrl));
+    console.log(`✅ Global fetch proxy set to ${proxyUrl}`);
+} else {
+    console.log('⚠️  No proxy configured – direct connection will be attempted.');
+}
+
 const express = require('express');
 const cors = require('cors');
 const config = require('./config');
